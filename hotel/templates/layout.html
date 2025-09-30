@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        {% block title %}
+        Ứng dụng bài viết
+        {% endblock %}
+    </title>
+
+    <!-- Load static files -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    {% block extra_css %}
+    {% endblock %}
+</head>
+<body>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<!-- 🔹 PHẦN HEADER -->
+<header class="top-header">
+    <div class="left">
+        <span class="phone-number">📞 1900 1833</span>
+    </div>
+
+    <div class="center">
+        <img src="{% static 'images/logo.png' %}" alt="Muong Thanh" class="logo">
+    </div>
+
+    <div class="right">
+        {% if user.is_authenticated %}
+            <div class="user-toggle">
+            <button id="userIcon" class="user-icon-btn">
+                <i class="fas fa-user-circle"></i>
+                <span class="username">{{ request.user.get_username }}</span>
+                <i class="fas fa-chevron-down arrow-icon"></i>
+            </button>
+            <div id="userDropdown" class="dropdown-menu">
+                <a href="#" class="dropdown-link">Thông tin cá nhân</a>
+                <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Đăng xuất</button>
+                </form>
+            </div>
+            </div>
+        {% else %}
+            <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="login-btn">Đăng nhập</a>
+        {% endif %}
+    </div>
+</header>
+<!-- 🔹 PHẦN NỘI DUNG CHÍNH -->
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

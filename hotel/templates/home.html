@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+Trang Chủ
+{% endblock %}
+
+{% block content %}
+<!-- 🔹 NAVIGATION BAR CHÍNH -->
+<nav class="main-navbar">
+    <ul>
+        <li class="active"><a href="{% url 'home' %}">Tổng quan</a></li>
+        <li><a href="#">Danh sách phòng</a></li>
+        <li><a href="#">Dịch vụ</a></li>
+        <li><a href="#">Hỏi đáp</a></li>
+        <li><a href="#">Quy định</a></li>
+    </ul>
+</nav>
+
+<div class="intro-banner">
+    <div class="banner-content">
+        <h1>Chào mừng đến với Mường Thanh Luxury</h1>
+        <h3>Khám phá kỳ nghỉ tuyệt vời của bạn tại khách sạn 5 sao.</h3>
+    </div>
+</div>
+
+<div class="content-box">
+    <p>
+        Tọa lạc tại vị trí đắc địa trên trục đường Trần Phú, <strong>Khách sạn Mường Thanh Luxury</strong> là điểm đến lý tưởng với tầm nhìn hướng ra Vịnh Nha Trang – một trong những vịnh biển đẹp nhất thế giới.
+    </p>
+
+    <p>
+        Với chiều cao 48 tầng và 458 phòng nghỉ sang trọng đạt chuẩn 5 sao, khách sạn mang đến không gian mở tuyệt đẹp, kết hợp thiết kế hiện đại và tiện nghi cao cấp. Mỗi phòng đều có cửa kính lớn giúp du khách chiêm ngưỡng cảnh quan biển và các đảo nổi tiếng như Hòn Mun, Hòn Một, Hòn Tằm, Đảo Ngọc...
+    </p>
+</div>
+
+<section id="hang-phong">
+    <h2 style="text-align: center; margin-bottom: 1rem;">Hạng phòng</h2>
+    <div class="room-slider">
+        <div class="room-category">
+            <div class="room-item">
+                <img src="{% static 'images/room1.jpg' %}" alt="Phòng Hạng Nhất">
+                <p class="room-title">Phòng Hạng Nhất</p>
+            </div>
+            <div class="room-item">
+                <img src="{% static 'images/room2.jpg' %}" alt="Phòng Hạng Sang">
+                <p class="room-title">Phòng Hạng Sang</p>
+            </div>
+            <div class="room-item">
+                <img src="{% static 'images/room3.jpg' %}" alt="Phòng Tiêu Chuẩn">
+                <p class="room-title">Phòng Tiêu Chuẩn</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Hỏi đáp -->
+<section id="hoi-dap" class="faq-section">
+    <div class="faq-title">Hỏi đáp</div>
+    <div class="faq-list">
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Check-in lúc mấy giờ?</span>
+                <span class="faq-icon">+</span>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Khách sạn có hồ bơi không?</span>
+                <span class="faq-icon">+</span>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Có bãi đỗ xe miễn phí không?</span>
+                <span class="faq-icon">+</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

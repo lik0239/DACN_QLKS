@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}Đăng ký{% endblock %}
+{% block content %}
+<div class="auth-container">
+  <div class="register-box">
+    <h2>Đăng ký</h2>
+
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form action="{% url 'register' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" method="post">
+      {% csrf_token %}
+      <!-- Khớp tuyệt đối tên cột CSDL -->
+      <input type="text"   name="tenkhachhang" placeholder="Tên khách hàng" required>
+      <input type="text"   name="cccd"         placeholder="CCCD"           required>
+      <input type="text"   name="sdt"          placeholder="Số điện thoại"  required>
+      <input type="email"  name="email"        placeholder="Email"          required>
+      <input type="text"   name="diachi"       placeholder="Địa chỉ"        required>
+      <input type="date"   name="ngaysinh"     placeholder="Ngày sinh"      required>
+
+      <input type="text"     name="tentaikhoan" placeholder="Tên tài khoản"  required>
+      <input type="password" name="matkhau"     placeholder="Mật khẩu"       required>
+      <!-- Vai trò có thể ẩn/readonly nếu bạn luôn mặc định -->
+      <input type="hidden"   name="vaitro"      value="khach_hang">
+
+      <button type="submit">Đăng ký</button>
+    </form>
+
+    <p style="margin-top:12px;">
+      Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
