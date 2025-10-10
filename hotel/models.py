@@ -1,10 +1,4 @@
-﻿# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
+﻿import uuid, os
 from django.db import models
 
 
@@ -199,13 +193,17 @@ class Nhanvien(models.Model):
         managed = False
         db_table = 'nhanvien'
 
+def room_upload_path(instance, filename):
+    ext = os.path.splitext(filename)[1].lower()
+    return f"rooms/{instance.sophong}/{uuid.uuid4().hex}{ext}"
 
 class Phong(models.Model):
     maphong = models.AutoField(primary_key=True)
     sophong = models.TextField(blank=True, null=True)
     maloaiphong = models.ForeignKey(Loaiphong, models.DO_NOTHING, db_column='maloaiphong')
     trangthai = models.TextField(blank=True, null=True)
-
+    anh = models.FileField(upload_to=room_upload_path, db_column='anh', blank=True, null=True)
+    
     class Meta:
         managed = False
         db_table = 'phong'
@@ -248,3 +246,26 @@ class Thanhtoan(models.Model):
     class Meta:
         managed = False
         db_table = 'thanhtoan'
+
+class TaiKhoanKhachHang(models.Model):
+    mataikhoan  = models.AutoField(db_column='mataikhoan', primary_key=True)
+    makhachhang = models.ForeignKey('Khachhang', models.DO_NOTHING, db_column='makhachhang')
+    tentaikhoan = models.CharField(db_column='tentaikhoan', max_length=150, unique=True)
+    matkhau     = models.CharField(db_column='matkhau', max_length=255)
+    email       = models.EmailField(db_column='email', max_length=255, null=True, blank=True, unique=True)
+
+    class Meta:
+        managed = False
+        db_table = 'taikhoankhachhang'
+
+class TaiKhoanNhanVien(models.Model):
+    mataikhoan  = models.AutoField(db_column='mataikhoan', primary_key=True)
+    manhanvien  = models.ForeignKey('Nhanvien', models.DO_NOTHING, db_column='manhanvien')
+    tentaikhoan = models.CharField(db_column='tentaikhoan', max_length=150, unique=True)
+    matkhau     = models.CharField(db_column='matkhau', max_length=255)
+    email       = models.EmailField(db_column='email', max_length=255, null=True, blank=True, unique=True)
+    vaitro      = models.CharField(db_column='vaitro', max_length=50, null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'taikhoannhanvien'

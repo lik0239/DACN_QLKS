@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Khachhang, Taikhoan
+from .models import Khachhang, Phong
 
 class RegistrationForm(forms.Form):
     # ---- Khachhang ----
@@ -35,3 +35,21 @@ class RegistrationForm(forms.Form):
         if Khachhang.objects.filter(cccd=c).exists():
             raise forms.ValidationError("CCCD đã tồn tại.")
         return c
+
+class PhongImageForm(forms.ModelForm):
+    class Meta:
+        model = Phong
+        fields = ['anh']
+
+    def clean_anh(self):
+        f = self.cleaned_data.get('anh')
+        if not f:
+            return f
+        # Giới hạn 3MB
+        if f.size > 3 * 1024 * 1024:
+            raise forms.ValidationError("Ảnh quá lớn (>3MB).")
+        # Kiểm tra MIME cơ bản
+        valid_mime = {'image/jpeg', 'image/png', 'image/webp', 'image/gif'}
+        ctype = getattr(f, 'content_type', None)
+        if ctype not in valid_mime:
+            raise forms.ValidationError("Chỉ chấp nhận JPG, PNG, WEBP, GIF.")

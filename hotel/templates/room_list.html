@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Danh sách phòng{% endblock %}
+
+{% block content %}
+<nav class="main-navbar">
+  <ul>
+    <li><a href="{% url 'home' %}">Tổng quan</a></li>
+    <li class="active"><a href="#">Danh sách phòng</a></li>
+    <li><a href="#">Dịch vụ</a></li>
+    <li><a href="#">Hỏi đáp</a></li>
+    <li><a href="#">Quy định</a></li>
+  </ul>
+</nav>
+
+<section class="room-list-section" style="padding: 2rem;">
+  <h2 style="text-align:center;font-size:2rem;color:#2c3e50;margin-bottom:2rem;">
+    Danh sách các phòng
+  </h2>
+
+  <div style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;">
+        {% for phong in phong_list %}
+        <div style="width:320px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:transform .2s ease;">
+            {% if phong.anh %}
+                <img
+                    src="{{ phong.anh.url|default:phong.anh }}"
+                    alt="Phòng {{ phong.sophong }}"
+                    style="width:100%;height:200px;object-fit:cover;">
+            {% else %}
+                <div style="width: 100%; height: 200px; background: #ccc; display: flex; align-items: center; justify-content: center; color: white;">Không có ảnh</div>
+            {% endif %}
+            <div style="padding:1rem;">
+                <h3 style="font-size:1.3rem;color:#34495e;margin-bottom:.5rem;">
+                    Phòng {{ phong.sophong }}
+                </h3>
+                <p><strong>Hạng phòng:</strong> {{ phong.maloaiphong.tenloaiphong }}</p>
+                <p><strong>Giá:</strong> {{ phong.maloaiphong.gia|floatformat:0 }} VNĐ</p>
+                <p><strong>Trạng thái:</strong> {{ phong.trangthai }}</p>
+            </div>
+            <a href="#"
+                style="display:block;margin:0 1rem 1rem 1rem;padding:.75rem 0;text-align:center;background-color:#3498db;color:#fff;font-weight:600;border-radius:8px;text-decoration:none;transition:background-color .3s ease;"
+                onmouseover="this.style.backgroundColor='#2980b9'"
+                onmouseout="this.style.backgroundColor='#3498db'">
+                Đặt phòng
+            </a>
+        </div>
+        {% empty %}
+            <p>Chưa có phòng nào.</p>
+        {% endfor %}
+  </div>
+</section>
+{% endblock %}
