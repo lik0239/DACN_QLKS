@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Đặt phòng{% endblock %}
+
+{% block content %}
+<div class="booking-container-custom">
+  <h2 class="booking-title-custom">Đặt phòng: {{ phong.sophong }}</h2>
+
+  <div class="booking-info-custom">
+    <div class="booking-customer-custom">
+      <h3>Thông tin khách hàng</h3>
+      <p><strong>Họ tên:</strong> {{ khachhang.tenkhachhang }}</p>
+      <p><strong>Email:</strong> {{ khachhang.email }}</p>
+      <p><strong>SĐT:</strong> {{ khachhang.sdt }}</p>
+      <p><strong>CCCD/CMND:</strong> {{ khachhang.cccd }}</p>
+      <p><strong>Địa chỉ:</strong> {{ khachhang.diachi }}</p>
+      <p><strong>Ngày sinh:</strong> {{ khachhang.ngaysinh }}</p>
+    </div>
+
+    <div class="booking-room-custom">
+      <h3>Thông tin phòng</h3>
+      <p><strong>Phòng:</strong> {{ phong.sophong }}</p>
+      <p><strong>Hạng phòng:</strong> {{ phong.maloaiphong.tenloaiphong }}</p>
+      <p><strong>Giá:</strong> {{ phong.maloaiphong.gia|floatformat:0 }} VNĐ</p>
+      <p><strong>Trạng thái:</strong> {{ phong.trangthai }}</p>
+
+      {% if phong.anh %}
+        <img src="{{ phong.anh.url|default:phong.anh }}" alt="Ảnh phòng {{ phong.sophong }}"
+             style="max-width:300px;border-radius:10px;margin-top:10px;">
+      {% else %}
+        <div style="width:300px;height:180px;background:#ccc;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;margin-top:10px;">
+          Không có ảnh
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <form method="post" class="booking-form-custom" autocomplete="off">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="message error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="{{ form.ngaynhan.id_for_label }}">Ngày nhận</label>
+      {{ form.ngaynhan }}
+      {{ form.ngaynhan.errors }}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.ngaytra.id_for_label }}">Ngày trả</label>
+      {{ form.ngaytra }}
+      {{ form.ngaytra.errors }}
+    </div>
+
+    <button type="submit" class="btn-submit-booking-custom">Xác nhận đặt phòng</button>
+    <a href="{% url 'room_list' %}" class="btn btn-outline-secondary" style="margin-left:8px;">Quay lại</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Khachhang, Phong
+from django.utils import timezone
+
+from .models import Khachhang, Phong, Datphong
 
 class RegistrationForm(forms.Form):
     # ---- Khachhang ----
@@ -53,3 +55,24 @@ class PhongImageForm(forms.ModelForm):
         ctype = getattr(f, 'content_type', None)
         if ctype not in valid_mime:
             raise forms.ValidationError("Chỉ chấp nhận JPG, PNG, WEBP, GIF.")
+
+class DatPhongForm(forms.ModelForm):
+    class Meta:
+        model = Datphong
+        fields = ['ngaynhan', 'ngaytra']
+        widgets = {
+            'ngaynhan': forms.DateInput(attrs={'type': 'date'}),
+            'ngaytra' : forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned = super().clean()
+        nhan = cleaned.get('ngaynhan')
+        tra  = cleaned.get('ngaytra')
+        today = timezone.localdate()
+        if nhan and tra:
+            if nhan < today:
+                raise forms.ValidationError("Ngày nhận phải từ hôm nay trở đi.")
+            if tra <= nhan:
+                raise forms.ValidationError("Ngày trả phải sau ngày nhận.")
+        return cleaned

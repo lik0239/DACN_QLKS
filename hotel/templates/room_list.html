@@ -38,7 +38,7 @@
                 <p><strong>Giá:</strong> {{ phong.maloaiphong.gia|floatformat:0 }} VNĐ</p>
                 <p><strong>Trạng thái:</strong> {{ phong.trangthai }}</p>
             </div>
-            <a href="#"
+            <a href="{% url 'datphong' phong.maphong %}"
                 style="display:block;margin:0 1rem 1rem 1rem;padding:.75rem 0;text-align:center;background-color:#3498db;color:#fff;font-weight:600;border-radius:8px;text-decoration:none;transition:background-color .3s ease;"
                 onmouseover="this.style.backgroundColor='#2980b9'"
                 onmouseout="this.style.backgroundColor='#3498db'">

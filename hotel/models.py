@@ -72,17 +72,31 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Datphong(models.Model):
-    madatphong = models.AutoField(primary_key=True)
+    madatphong  = models.AutoField(primary_key=True)
     makhachhang = models.ForeignKey('Khachhang', models.DO_NOTHING, db_column='makhachhang')
-    maphong = models.ForeignKey('Phong', models.DO_NOTHING, db_column='maphong')
-    ngaydat = models.DateField(blank=True, null=True)
-    ngaynhan = models.DateField(blank=True, null=True)
-    ngaytra = models.DateField(blank=True, null=True)
-    trangthai = models.TextField(blank=True, null=True)
+    maphong     = models.ForeignKey('Phong',      models.DO_NOTHING, db_column='maphong')
+    ngaydat     = models.DateField(blank=True, null=True)
+    ngaynhan    = models.DateField(blank=True, null=True)
+    ngaytra     = models.DateField(blank=True, null=True)
+
+    TRANGTHAI_CHOICES = [
+        ('dangcho',    'Đang chờ'),
+        ('xacnhan',    'Đã xác nhận'),
+        ('huy',        'Đã hủy'),
+        ('hoanthanh',  'Hoàn thành'),
+    ]
+    trangthai = models.CharField(db_column='trangthai', max_length=20,
+                                 choices=TRANGTHAI_CHOICES, default='dangcho', blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed  = False
         db_table = 'datphong'
+
+    def __str__(self):
+        # chú ý field chữ thường: tenkhachhang, sophong
+        ten = getattr(self.makhachhang, 'tenkhachhang', '')
+        so  = getattr(self.maphong, 'sophong', '')
+        return f'#{self.madatphong} - {ten} đặt phòng {so}'
 
 
 class Dichvu(models.Model):
@@ -269,3 +283,5 @@ class TaiKhoanNhanVien(models.Model):
     class Meta:
         managed = False
         db_table = 'taikhoannhanvien'
+
+

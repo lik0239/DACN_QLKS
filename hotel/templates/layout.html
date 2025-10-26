@@ -18,13 +18,6 @@
     {% endblock %}
 </head>
 <body>
-{% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li class="message {{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
 <!-- 🔹 PHẦN HEADER -->
 <header class="top-header">
     <div class="left">
@@ -56,6 +49,13 @@
         {% endif %}
     </div>
 </header>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 <!-- 🔹 PHẦN NỘI DUNG CHÍNH -->
 <main>
     {% block content %}
