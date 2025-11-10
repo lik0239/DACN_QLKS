@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Quy định khách sạn{% endblock %}
+
+{% block content %}
+<nav class="main-navbar">
+  <ul>
+    <li><a href="{% url 'home' %}">Tổng quan</a></li>
+    <li><a href="{% url 'room_list' %}">Danh sách phòng</a></li>
+    <li><a href="#">Dịch vụ</a></li>
+    <li><a href="#">Hỏi đáp</a></li>
+    <li class="active"><a href="{% url 'policy' %}">Quy định</a></li>
+  </ul>
+</nav>
+
+<header class="page-header" style="margin: 24px 0;">
+  <h1>Quy định khách sạn</h1>
+  <p class="text-muted">Áp dụng cho tất cả khách lưu trú tại Mường Thanh Luxury.</p>
+</header>
+
+<section class="card">
+  <h2>1. Thời gian nhận – trả phòng</h2>
+  <ul>
+    <li><strong>Nhận phòng (Check-in):</strong> từ 14:00</li>
+    <li><strong>Trả phòng (Check-out):</strong> trước 12:00</li>
+    <li><em>Trả phòng trễ</em> (tuỳ tình trạng phòng): đến 15:00 phụ thu 30% giá phòng; đến 18:00 phụ thu 50%; sau 18:00 tính 100%/đêm.</li>
+    <li>Nhận phòng sớm trước 10:00 phụ thu 50%; từ 10:00–14:00 phụ thu 30%.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>2. Đặt cọc & thanh toán</h2>
+  <ul>
+    <li>Yêu cầu đặt cọc khi nhận phòng (tiền mặt/thẻ) để đảm bảo phát sinh.</li>
+    <li>Chấp nhận: Tiền mặt, thẻ Visa/Master/JCB, chuyển khoản.</li>
+    <li>Hóa đơn VAT: vui lòng cung cấp thông tin công ty khi nhận phòng.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>3. Hủy/Thay đổi đặt phòng</h2>
+  <ul>
+    <li>Miễn phí hủy trước <strong>5 ngày</strong> so với ngày đến.</li>
+    <li>Hủy trong vòng 5 ngày: phạt <strong>100% đêm đầu</strong>.</li>
+    <li>Không đến (No-show): phạt <strong>100% tổng tiền</strong>.</li>
+    <li>Ngày Lễ/Tết có thể áp dụng chính sách riêng.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>4. Trẻ em & giường phụ</h2>
+  <ul>
+    <li>Trẻ dưới 6 tuổi: miễn phí khi ngủ chung giường với bố mẹ.</li>
+    <li>Trẻ 6–11 tuổi: phụ thu ăn sáng theo quy định khách sạn.</li>
+    <li>Từ 12 tuổi: tính như người lớn. Giường phụ (nếu có): phụ thu theo từng hạng phòng.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>5. Hút thuốc, thú cưng & tiếng ồn</h2>
+  <ul>
+    <li><strong>Không hút thuốc</strong> trong phòng/không gian kín. Vi phạm: phụ phí khử mùi/giặt ủi theo thực tế.</li>
+    <li><strong>Không nhận thú cưng</strong> (trừ trường hợp có văn bản đồng ý trước).</li>
+    <li>Giữ yên tĩnh sau 22:00; vui lòng tôn trọng các khách khác.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>6. An toàn & tài sản</h2>
+  <ul>
+    <li>Vui lòng sử dụng <strong>két an toàn</strong> trong phòng cho tài sản giá trị.</li>
+    <li>Khách chịu trách nhiệm cho hư hỏng, mất mát do mình gây ra.</li>
+    <li>Vật dụng thất lạc: liên hệ Lễ tân (Lost &amp; Found) – chúng tôi lưu giữ tối đa 30 ngày.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>7. Phụ phí phổ biến</h2>
+  <div class="table-wrap">
+    <table class="charges">
+      <thead>
+        <tr><th>Hạng mục</th><th>Mức phí tham khảo</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Giường phụ</td><td>350.000 – 500.000đ/đêm</td></tr>
+        <tr><td>Trả phòng trễ đến 18:00</td><td>50% giá phòng/đêm</td></tr>
+        <tr><td>Khử mùi thuốc lá trong phòng</td><td>800.000đ/lần</td></tr>
+        <tr><td>Mất thẻ phòng</td><td>100.000đ/thẻ</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">* Mức phí có thể thay đổi theo mùa &amp; hạng phòng. Vui lòng liên hệ Lễ tân để biết mức phí chính xác tại thời điểm lưu trú.</p>
+</section>
+
+<section class="card">
+  <h2>8. Câu hỏi thường gặp</h2>
+  <div class="faq">
+    <details>
+      <summary>Khách sạn có chỗ đỗ xe không?</summary>
+      Có bãi đỗ xe máy miễn phí; ô tô phụ thuộc chỗ trống trong nhà xe/đối tác gần khách sạn.
+    </details>
+    <details>
+      <summary>Có hồ bơi/ phòng gym không?</summary>
+      Có, mở cửa 06:00–21:00. Vui lòng tuân thủ nội quy khu vực tiện ích.
+    </details>
+    <details>
+      <summary>Ăn sáng phục vụ lúc nào?</summary>
+      06:00–10:00 hàng ngày tại nhà hàng tầng trệt.
+    </details>
+  </div>
+</section>
+
+<style>
+  .card{background:#fff;border-radius:12px;padding:20px;margin:16px 0;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+  .table-wrap{overflow:auto}
+  table.charges{width:100%;border-collapse:collapse}
+  table.charges th, table.charges td{border:1px solid #eee;padding:10px;text-align:left}
+  table.charges th{background:#fafafa}
+  .note{font-size:.95rem;color:#666}
+  .faq details{border:1px solid #eee;border-radius:10px;padding:12px;margin:8px 0}
+  .faq summary{cursor:pointer;font-weight:600}
+  .page-header h1{margin:0}
+  .text-muted{color:#6b7280}
+</style>
+{% endblock %}

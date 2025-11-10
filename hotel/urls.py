@@ -22,4 +22,6 @@ urlpatterns = [
     path('internal/bookings/search/', internal_booking_search, name='internal_booking_search'),
     path('internal/booking/<int:madatphong>/', booking_detail, name='booking_detail'),
     path('internal/room/<int:maphong>/booking/', room_booking_info, name='room_booking_info'),
+    path("quy-dinh/", views.quy_dinh, name="policy"),
+    path("profile/", views.profile, name="profile")
 ]

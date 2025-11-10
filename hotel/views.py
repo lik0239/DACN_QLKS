@@ -7,8 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count, Min, Q
 from functools import wraps
+from django.core.paginator import Paginator
 
-from .forms import RegistrationForm, PhongImageForm, DatPhongForm
+from .forms import RegistrationForm, PhongImageForm, DatPhongForm, KhachHangUpdateForm, KhachHangPasswordChangeForm
 from .models import Khachhang, TaiKhoanKhachHang, TaiKhoanNhanVien, Phong, Datphong
 
 def home(request):
@@ -402,4 +403,65 @@ def room_booking_info(request, maphong: int):
 
     return render(request, 'internal_room_booking_info.html', {
         'phong': p, 'current': cur, 'upcoming': nxt, 'pending': pend, 'today': today
+    })
+
+def quy_dinh(request):
+    return render(request, "quydinh.html")
+
+@login_required
+def profile(request):
+    username = request.user.get_username()
+
+    tk = get_object_or_404(TaiKhoanKhachHang, tentaikhoan=username)
+    kh = tk.makhachhang
+
+    qs = (Datphong.objects
+          .select_related('maphong', 'makhachhang')
+          .filter(makhachhang=kh)
+          .order_by('-ngaydat', '-madatphong'))
+
+    paginator = Paginator(qs, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.method == 'POST':
+        form_type = request.POST.get('form_type')
+
+        # ====== ĐỔI MẬT KHẨU ======
+        if form_type == 'password':
+            info_form = KhachHangUpdateForm(instance=kh)
+            password_form = KhachHangPasswordChangeForm(
+                request.POST,
+                tai_khoan=tk
+            )
+            if password_form.is_valid():
+                tk.matkhau = password_form.cleaned_data['new_password']
+                tk.save(update_fields=['matkhau'])
+                messages.success(request, 'Đổi mật khẩu thành công.')
+                return redirect('profile')
+            else:
+                messages.error(request, 'Vui lòng kiểm tra lại thông tin đổi mật khẩu.')
+
+        # ====== CẬP NHẬT THÔNG TIN CÁ NHÂN ======
+        else:
+            info_form = KhachHangUpdateForm(request.POST, instance=kh)
+            password_form = KhachHangPasswordChangeForm(tai_khoan=tk)
+            if info_form.is_valid():
+                kh = info_form.save()
+                tk.email = info_form.cleaned_data.get('email') or tk.email
+                tk.save(update_fields=['email'])
+                messages.success(request, 'Cập nhật thông tin thành công.')
+                return redirect('profile')
+            else:
+                messages.error(request, 'Vui lòng kiểm tra lại các trường.')
+    else:
+        info_form = KhachHangUpdateForm(instance=kh)
+        password_form = KhachHangPasswordChangeForm(tai_khoan=tk)
+
+    return render(request, 'profile.html', {
+        'khach': kh,
+        'taikhoan': tk,
+        'form': info_form,
+        'password_form': password_form,
+        'page_obj': page_obj,
     })

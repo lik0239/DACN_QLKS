@@ -76,3 +76,84 @@ class DatPhongForm(forms.ModelForm):
             if tra <= nhan:
                 raise forms.ValidationError("Ngày trả phải sau ngày nhận.")
         return cleaned
+
+class KhachHangUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Khachhang
+        fields = ['tenkhachhang', 'sdt', 'email', 'diachi', 'ngaysinh']
+        widgets = {
+            'tenkhachhang': forms.TextInput(attrs={
+                'placeholder': 'Nhập họ tên'
+            }),
+            'sdt': forms.TextInput(attrs={
+                'placeholder': 'Nhập số điện thoại'
+            }),
+            'email': forms.EmailInput(attrs={
+                'placeholder': 'Nhập email'
+            }),
+            'diachi': forms.TextInput(attrs={
+                'placeholder': 'Nhập địa chỉ'
+            }),
+            'ngaysinh': forms.DateInput(attrs={
+                'type': 'date'
+            }),
+        }
+    def __init__(self, *args, **kwargs):
+        # giữ instance hiện tại để không báo trùng với chính mình
+        self.instance = kwargs.get('instance', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            qs = Khachhang.objects.filter(email__iexact=email)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise forms.ValidationError("Email này đã được sử dụng bởi khách khác.")
+        return email
+
+    def clean_sdt(self):
+        sdt = self.cleaned_data.get('sdt')
+        if sdt:
+            qs = Khachhang.objects.filter(sdt__iexact=sdt)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise forms.ValidationError("Số điện thoại này đã tồn tại.")
+        return sdt
+    
+class KhachHangPasswordChangeForm(forms.Form):
+    current_password = forms.CharField(
+        label="Mật khẩu hiện tại",
+        widget=forms.PasswordInput
+    )
+    new_password = forms.CharField(
+        label="Mật khẩu mới",
+        widget=forms.PasswordInput
+    )
+    confirm_password = forms.CharField(
+        label="Xác nhận mật khẩu mới",
+        widget=forms.PasswordInput
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.tai_khoan = kwargs.pop('tai_khoan', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_current_password(self):
+        cur = self.cleaned_data.get('current_password')
+        if self.tai_khoan and (self.tai_khoan.matkhau or "") != cur:
+            raise forms.ValidationError("Mật khẩu hiện tại không đúng.")
+        return cur
+
+    def clean(self):
+        cleaned = super().clean()
+        new = cleaned.get('new_password')
+        cf  = cleaned.get('confirm_password')
+
+        if new and cf and new != cf:
+            raise forms.ValidationError("Mật khẩu mới và xác nhận không khớp.")
+        if new and len(new) < 6:
+            raise forms.ValidationError("Mật khẩu mới phải có ít nhất 6 ký tự.")
+        return cleaned
