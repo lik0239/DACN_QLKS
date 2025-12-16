@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
 <div class="profile-page">
   <!-- HEADER -->
   <header class="profile-header card">
@@ -147,10 +146,11 @@
             <tr>
               <th class="col-id">Mã đơn</th>
               <th class="col-room">Phòng</th>
-              <th class="col-date">Ngày đặt</th>
+              <th class="col-date">Thời gian đặt</th>
               <th class="col-date">Nhận</th>
               <th class="col-date">Trả</th>
               <th class="col-status">Trạng thái</th>
+              <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -158,12 +158,14 @@
             <tr>
               <td class="col-id">#{{ b.madatphong }}</td>
               <td class="col-room">{{ b.maphong.sophong }}</td>
-              <td class="col-date">{{ b.ngaydat|date:"d/m/Y" }}</td>
+              <td class="col-date">{{ b.ngaydat|date:"d/m/Y H:i" }}</td>
               <td class="col-date">{{ b.ngaynhan|date:"d/m/Y" }}</td>
               <td class="col-date">{{ b.ngaytra|date:"d/m/Y" }}</td>
               <td class="col-status">
                 {% if b.trangthai == 'dangcho' %}
                   <span class="badge badge-wait">Đang chờ</span>
+                {% elif b.trangthai == 'chuathanhtoan' %}
+                  <span class="badge badge-wait">Chưa thanh toán</span>
                 {% elif b.trangthai == 'xacnhan' %}
                   <span class="badge badge-ok">Đã xác nhận</span>
                 {% elif b.trangthai == 'huy' %}
@@ -172,6 +174,36 @@
                   <span class="badge badge-done">Hoàn thành</span>
                 {% else %}
                   <span class="badge">{{ b.trangthai }}</span>
+                {% endif %}
+              </td>
+
+              <td>
+                {% if b.trangthai == 'huy' or b.trangthai == 'hoanthanh' or b.trangthai == 'yeucauhuy' %}
+                  <span class="muted small">—</span>
+                {% else %}
+                  <button type="button"
+                          class="btn-cancel-request"
+                          onclick="toggleCancelForm({{ b.madatphong }})">
+                    Yêu cầu hủy
+                  </button>
+
+                  <div id="cancel-form-{{ b.madatphong }}" class="cancel-form">
+                    <form method="post" action="{% url 'booking_cancel_request' b.madatphong %}">
+                      {% csrf_token %}
+                      <textarea name="reason"
+                                rows="3"
+                                placeholder="Nhập lý do hủy phòng..."
+                                class="cancel-textarea"></textarea>
+                      <div class="cancel-actions">
+                        <button type="submit" class="btn-cancel-submit">Gửi</button>
+                        <button type="button"
+                                class="btn-cancel-close"
+                                onclick="toggleCancelForm({{ b.madatphong }})">
+                          Đóng
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 {% endif %}
               </td>
             </tr>
@@ -204,6 +236,15 @@
   </section>
   <a href="{% url 'home' %}" class="back-btn">⬅ Trở lại Trang Chủ</a>
 </div>
+
+<script>
+function toggleCancelForm(id) {
+  const el = document.getElementById('cancel-form-' + id);
+  if (!el) return;
+  const isHidden = el.style.display === '' || el.style.display === 'none';
+  el.style.display = isHidden ? 'block' : 'none';
+}
+</script>
 
 <style>
   :root { --container: 1200px; }
@@ -266,7 +307,7 @@
   }
 
   .field-label{
-    width:140px;          /* chiều rộng cột nhãn */
+    width:140px;
     flex-shrink:0;
     font-size:.95rem;
     color:#374151;
@@ -321,7 +362,7 @@
     font-size:.9rem;
   }
 
-  /* bảng lịch sử + badge + phân trang giữ nguyên */
+  /* bảng lịch sử + badge + phân trang */
   .table-wrap{width:100%;overflow-x:auto;margin-top:8px;}
   .tbl.booking{width:100%;border-collapse:collapse;font-size:.9rem;}
   .tbl.booking th,
@@ -330,6 +371,7 @@
     border-bottom:1px solid #e5e7eb;
     text-align:left;
     white-space:nowrap;
+    vertical-align:top;
   }
   .tbl.booking thead tr{background:#f9fafb;font-weight:600;}
 
@@ -345,6 +387,7 @@
   .badge-ok{background:#dcfce7;color:#166534}
   .badge-cancel{background:#fee2e2;color:#b91c1c}
   .badge-done{background:#e0f2fe;color:#075985}
+  .badge-request{background:#fef3c7;color:#b45309}
 
   .pagination{
     margin-top:10px;
@@ -369,6 +412,63 @@
     border-color:#2563eb;
     color:#fff;
     cursor:default;
+  }
+
+  /* nút & form yêu cầu hủy */
+  .btn-cancel-request{
+    padding:4px 10px;
+    border-radius:6px;
+    border:none;
+    background:#e74c3c;
+    color:#fff;
+    font-size:.85rem;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .btn-cancel-request:hover{
+    background:#c0392b;
+  }
+
+  .cancel-form{
+    display:none;
+    margin-top:6px;
+  }
+
+  .cancel-textarea{
+    width:220px;
+    padding:6px 8px;
+    border-radius:6px;
+    border:1px solid #d1d5db;
+    font-size:.85rem;
+    resize:vertical;
+  }
+
+  .cancel-actions{
+    margin-top:4px;
+    display:flex;
+    gap:4px;
+  }
+
+  .btn-cancel-submit,
+  .btn-cancel-close{
+    flex:1;
+    padding:4px 0;
+    font-size:.8rem;
+    border-radius:6px;
+    cursor:pointer;
+  }
+
+  .btn-cancel-submit{
+    border:none;
+    background:#e74c3c;
+    color:#fff;
+  }
+  .btn-cancel-submit:hover{background:#c0392b;}
+
+  .btn-cancel-close{
+    border:1px solid #d1d5db;
+    background:#fff;
+    color:#374151;
   }
 
   @media (max-width: 640px){

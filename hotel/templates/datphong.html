@@ -7,6 +7,7 @@
 <div class="booking-container-custom">
   <h2 class="booking-title-custom">Đặt phòng: {{ phong.sophong }}</h2>
 
+  <!-- THÔNG TIN KHÁCH + PHÒNG -->
   <div class="booking-info-custom">
     <div class="booking-customer-custom">
       <h3>Thông tin khách hàng</h3>
@@ -15,47 +16,360 @@
       <p><strong>SĐT:</strong> {{ khachhang.sdt }}</p>
       <p><strong>CCCD/CMND:</strong> {{ khachhang.cccd }}</p>
       <p><strong>Địa chỉ:</strong> {{ khachhang.diachi }}</p>
-      <p><strong>Ngày sinh:</strong> {{ khachhang.ngaysinh }}</p>
+      <p><strong>Ngày sinh:</strong> {{ khachhang.ngaysinh|date:"d/m/Y" }}</p>
     </div>
 
     <div class="booking-room-custom">
       <h3>Thông tin phòng</h3>
       <p><strong>Phòng:</strong> {{ phong.sophong }}</p>
       <p><strong>Hạng phòng:</strong> {{ phong.maloaiphong.tenloaiphong }}</p>
-      <p><strong>Giá:</strong> {{ phong.maloaiphong.gia|floatformat:0 }} VNĐ</p>
+      <p><strong>Giá / đêm:</strong> {{ phong.maloaiphong.gia|floatformat:0 }} VNĐ</p>
       <p><strong>Trạng thái:</strong> {{ phong.trangthai }}</p>
 
       {% if phong.anh %}
-        <img src="{{ phong.anh.url|default:phong.anh }}" alt="Ảnh phòng {{ phong.sophong }}"
-             style="max-width:300px;border-radius:10px;margin-top:10px;">
+        <img src="{{ phong.anh.url|default:phong.anh }}"
+             alt="Ảnh phòng {{ phong.sophong }}"
+             class="booking-room-img">
       {% else %}
-        <div style="width:300px;height:180px;background:#ccc;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;margin-top:10px;">
+        <div class="booking-room-img booking-room-img--empty">
           Không có ảnh
         </div>
       {% endif %}
     </div>
   </div>
 
-  <form method="post" class="booking-form-custom" autocomplete="off">
+  <!-- FORM ĐẶT PHÒNG -->
+  <form method="post"
+        class="booking-form-custom"
+        autocomplete="off"
+        id="booking-form"
+        data-room-price="{{ phong.maloaiphong.gia|floatformat:0|default:'0' }}">
     {% csrf_token %}
+
     {% if form.non_field_errors %}
       <div class="message error">{{ form.non_field_errors }}</div>
     {% endif %}
 
-    <div class="form-group">
-      <label for="{{ form.ngaynhan.id_for_label }}">Ngày nhận</label>
-      {{ form.ngaynhan }}
-      {{ form.ngaynhan.errors }}
+    <div class="booking-dates-row">
+      <div class="form-group">
+        <label for="{{ form.ngaynhan.id_for_label }}">Ngày nhận</label>
+        {{ form.ngaynhan }}
+        <div class="field-error">{{ form.ngaynhan.errors }}</div>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.ngaytra.id_for_label }}">Ngày trả</label>
+        {{ form.ngaytra }}
+        <div class="field-error">{{ form.ngaytra.errors }}</div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="{{ form.ngaytra.id_for_label }}">Ngày trả</label>
-      {{ form.ngaytra }}
-      {{ form.ngaytra.errors }}
+    <!-- DỊCH VỤ KÈM THEO -->
+    <section class="booking-services">
+      <h3>Dịch vụ kèm theo (tuỳ chọn)</h3>
+      {% if services %}
+        <div class="services-grid">
+          {% for dv in services %}
+          <label class="service-option">
+            <input type="checkbox"
+                  name="services"
+                  value="{{ dv.madichvu }}"
+                  data-price="{{ dv.gia|floatformat:0 }}">
+
+            <div class="service-content">
+              <div class="service-header">
+                <span class="service-name">{{ dv.tendichvu }}</span>
+                <span class="service-price">{{ dv.gia|floatformat:0 }}₫</span>
+              </div>
+              {% if dv.mota %}
+                <p class="service-desc">{{ dv.mota }}</p>
+              {% endif %}
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">Hiện chưa có dịch vụ bổ sung.</p>
+      {% endif %}
+    </section>
+
+    <!-- TÓM TẮT TẠM TÍNH -->
+    <div class="booking-summary">
+      <div>
+        <div>Số đêm: <span id="summary-nights">–</span></div>
+        <div>Tiền phòng: <span id="summary-room">0₫</span></div>
+        <div>Dịch vụ kèm theo: <span id="summary-services">0₫</span></div>
+      </div>
+      <div class="booking-summary-total">
+        Tổng tạm tính: <span id="summary-total">0₫</span>
+      </div>
     </div>
 
-    <button type="submit" class="btn-submit-booking-custom">Xác nhận đặt phòng</button>
-    <a href="{% url 'room_list' %}" class="btn btn-outline-secondary" style="margin-left:8px;">Quay lại</a>
+    <div class="booking-actions">
+      <button type="submit" class="btn-submit-booking-custom">Xác nhận đặt phòng</button>
+      <a href="{% url 'room_list' %}" class="btn-back-booking-custom">Quay lại</a>
+    </div>
   </form>
 </div>
+
+<script>
+// Tính số đêm và tạm tính tiền phòng + dịch vụ
+(function() {
+  const form = document.getElementById('booking-form');
+  if (!form) return;
+
+  const roomPrice = parseInt(form.dataset.roomPrice || '0');
+
+  const ngayNhanInput = form.querySelector('input[name="ngaynhan"]');
+  const ngayTraInput  = form.querySelector('input[name="ngaytra"]');
+
+  const nightsEl   = document.getElementById('summary-nights');
+  const roomEl     = document.getElementById('summary-room');
+  const servicesEl = document.getElementById('summary-services');
+  const totalEl    = document.getElementById('summary-total');
+
+  function parseDate(value) {
+    if (!value) return null;
+    const parts = value.split('-'); // yyyy-mm-dd
+    if (parts.length !== 3) return null;
+    return new Date(parts[0], parts[1]-1, parts[2]);
+  }
+
+  function formatMoney(v) {
+    return v.toLocaleString('vi-VN') + '₫';
+  }
+
+  function recalc() {
+    const d1 = parseDate(ngayNhanInput.value);
+    const d2 = parseDate(ngayTraInput.value);
+
+    let nights = 0;
+    if (d1 && d2 && d2 > d1) {
+      nights = Math.round((d2 - d1) / (1000*60*60*24));
+    }
+    if (nights <= 0 && d1 && d2) nights = 1; // tối thiểu 1 đêm
+
+    const roomCost = nights > 0 ? nights * roomPrice : 0;
+
+    let serviceCost = 0;
+    form.querySelectorAll('input[name="services"]:checked').forEach(cb => {
+      serviceCost += parseInt(cb.dataset.price || '0');
+    });
+
+    nightsEl.textContent   = nights > 0 ? nights : '–';
+    roomEl.textContent     = formatMoney(roomCost);
+    servicesEl.textContent = formatMoney(serviceCost);
+    totalEl.textContent    = formatMoney(roomCost + serviceCost);
+  }
+
+  if (ngayNhanInput) ngayNhanInput.addEventListener('change', recalc);
+  if (ngayTraInput)  ngayTraInput.addEventListener('change', recalc);
+  form.querySelectorAll('input[name="services"]').forEach(cb => {
+    cb.addEventListener('change', recalc);
+  });
+
+  recalc();
+})();
+</script>
+
+<style>
+  .booking-container-custom{
+    max-width:900px;
+    margin:24px auto 40px;
+    background:#fff;
+    border-radius:18px;
+    padding:22px 26px 26px;
+    box-shadow:0 8px 28px rgba(0,0,0,.08);
+  }
+  .booking-title-custom{
+    text-align:center;
+    font-size:1.8rem;
+    margin:0 0 18px;
+    color:#111827;
+  }
+  .booking-info-custom{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    margin-bottom:18px;
+  }
+  @media (max-width:768px){
+    .booking-info-custom{grid-template-columns:1fr;}
+  }
+  .booking-customer-custom h3,
+  .booking-room-custom h3{
+    margin:0 0 8px;
+    font-size:1.1rem;
+    color:#1d4ed8;
+  }
+  .booking-customer-custom p,
+  .booking-room-custom p{
+    margin:2px 0;
+    font-size:.95rem;
+  }
+  .booking-room-img{
+    max-width:300px;
+    width:100%;
+    height:auto;
+    border-radius:10px;
+    margin-top:10px;
+    object-fit:cover;
+  }
+  .booking-room-img--empty{
+    width:300px;
+    height:180px;
+    background:#ccc;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+  }
+
+  .booking-form-custom{
+    margin-top:10px;
+  }
+  .booking-dates-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media (max-width:640px){
+    .booking-dates-row{grid-template-columns:1fr;}
+  }
+  .form-group{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .form-group label{
+    font-size:.95rem;
+    color:#374151;
+  }
+  .form-group input{
+    height:40px;
+    padding:6px 10px;
+    border-radius:8px;
+    border:1px solid #d1d5db;
+    font-size:.95rem;
+  }
+  .field-error{color:#dc2626;font-size:.8rem;}
+
+    .booking-services{
+    margin-top:18px;
+  }
+  .booking-services h3{
+    margin:0 0 10px;
+    font-size:1.05rem;
+  }
+
+  /* Lưới 2 cột */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(250px, 1fr));
+    gap:10px 14px;
+  }
+  @media (max-width:768px){
+    .services-grid{grid-template-columns:1fr;}
+  }
+
+  /* Mỗi dịch vụ là một card */
+  .service-option{
+    position:relative;
+    display:block;
+    padding:10px 12px 10px 44px; /* chừa chỗ cho checkbox bên trái */
+    border-radius:10px;
+    border:1px solid #e5e7eb;
+    background:#f9fafb;
+    cursor:pointer;
+    transition:box-shadow .15s, border-color .15s, background .15s;
+  }
+
+  /* checkbox cố định góc trên trái */
+  .service-option input{
+    position:absolute;
+    left:14px;
+    top:14px;
+    margin:0;
+  }
+
+  .service-main{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+
+  .service-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .service-name{
+    font-weight:600;
+    font-size:.95rem;
+  }
+  .service-desc{
+    font-size:.85rem;
+    color:#6b7280;
+    margin:2px 0 0;
+  }
+  .service-price{
+    white-space:nowrap;
+    font-weight:700;
+    color:#b45309;
+    font-size:.9rem;
+  }
+
+  .service-option:hover{
+    border-color:#f59e0b;
+    background:#fef9c3;
+    box-shadow:0 2px 10px rgba(0,0,0,.05);
+  }
+
+  .booking-summary{
+    margin-top:18px;
+    padding:10px 12px;
+    border-radius:12px;
+    background:#f3f4ff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    font-size:.9rem;
+  }
+  .booking-summary-total{
+    font-weight:700;
+    color:#1d4ed8;
+  }
+
+  .booking-actions{
+    margin-top:18px;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+  }
+  .btn-submit-booking-custom{
+    background:#16a34a;
+    color:#fff;
+    border:none;
+    border-radius:999px;
+    padding:9px 20px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .btn-submit-booking-custom:hover{filter:brightness(.95);}
+  .btn-back-booking-custom{
+    align-self:center;
+    padding:8px 16px;
+    border-radius:999px;
+    border:1px solid #d1d5db;
+    text-decoration:none;
+    color:#374151;
+    font-size:.95rem;
+  }
+  .btn-back-booking-custom:hover{
+    background:#f3f4f6;
+  }
+  .muted{color:#6b7280;}
+</style>
 {% endblock %}

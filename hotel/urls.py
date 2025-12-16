@@ -23,5 +23,11 @@ urlpatterns = [
     path('internal/booking/<int:madatphong>/', booking_detail, name='booking_detail'),
     path('internal/room/<int:maphong>/booking/', room_booking_info, name='room_booking_info'),
     path("quy-dinh/", views.quy_dinh, name="policy"),
-    path("profile/", views.profile, name="profile")
+    path("profile/", views.profile, name="profile"),
+    path('services/', views.services_view, name='services'),
+    path('thanh-toan/<int:madatphong>/', views.payment_view, name='payment'),
+    path('internal/dashboard/', views.internal_dashboard, name='internal_dashboard'),
+    path('lich-su-dat-phong/huy/<int:madatphong>/', views.booking_cancel_request, name='booking_cancel_request'),
+    path('internal/cancel-requests/', views.internal_cancel_requests, name="internal_cancel_requests"),
+    path('internal/bookings/', views.internal_booking_board, name='internal_booking_board'),
 ]

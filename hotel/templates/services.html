@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Dịch vụ khách sạn{% endblock %}
+
+{% block content %}
+<nav class="main-navbar">
+  <ul>
+    <li><a href="{% url 'home' %}">Tổng quan</a></li>
+    <li><a href="{% url 'room_list' %}">Danh sách phòng</a></li>
+    <li class="active"><a href="{% url 'services' %}">Dịch vụ</a></li>
+    <li><a href="#">Hỏi đáp</a></li>
+    <li><a href="{% url 'policy' %}">Quy định</a></li>
+  </ul>
+</nav>
+
+<div class="service-page">
+  <!-- HERO -->
+  <header class="service-hero">
+    <div>
+      <h1>Dịch vụ khách sạn</h1>
+      <p class="muted">Những tiện ích bổ sung giúp kỳ nghỉ của bạn thoải mái hơn.</p>
+    </div>
+  </header>
+
+  <!-- DANH SÁCH DỊCH VỤ -->
+  <section class="card">
+    <h2 class="section-title">Danh sách dịch vụ</h2>
+
+    {% if services %}
+      <div class="service-grid">
+        {% for dv in services %}
+        <article class="service-item">
+          <div class="service-header">
+            <h3>{{ dv.tendichvu }}</h3>
+            <div class="service-price">
+              {{ dv.gia|floatformat:0 }}₫
+            </div>
+          </div>
+          {% if dv.mota %}
+            <p class="service-desc">{{ dv.mota }}</p>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">Hiện tại chưa có dịch vụ nào.</p>
+    {% endif %}
+  </section>
+</div>
+
+<style>
+  .service-page{
+    max-width:1100px;
+    width:min(94vw,1100px);
+    margin:24px auto 40px;
+  }
+
+  .service-hero{
+    padding:8px 4px 18px;
+    border-bottom:1px solid #e5e7eb;
+    margin-bottom:18px;
+  }
+  .service-hero h1{
+    margin:0;
+    font-size:2rem;
+    color:#111827;
+  }
+  .service-hero .muted{
+    margin-top:4px;
+    color:#6b7280;
+  }
+
+  .card{
+    background:#fff;
+    border-radius:14px;
+    padding:18px 20px;
+    box-shadow:0 8px 24px rgba(0,0,0,.06);
+  }
+  .section-title{
+    margin:0 0 14px;
+    font-size:1.2rem;
+    color:#111827;
+  }
+
+  /* Lưới 2 cột giống hình bạn gửi */
+  .service-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(260px,1fr));
+    gap:14px 18px;
+  }
+  @media (max-width: 768px){
+    .service-grid{grid-template-columns:1fr;}
+  }
+
+  .service-item{
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+    padding:12px 14px;
+    background:#f9fafb;
+  }
+  .service-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .service-header h3{
+    margin:0;
+    font-size:1rem;
+    color:#111827;
+  }
+  .service-price{
+    font-weight:700;
+    color:#b45309;
+    font-size:.95rem;
+    white-space:nowrap;
+  }
+  .service-desc{
+    margin:6px 0 0;
+    font-size:.9rem;
+    color:#4b5563;
+  }
+  .muted{color:#6b7280}
+</style>
+{% endblock %}

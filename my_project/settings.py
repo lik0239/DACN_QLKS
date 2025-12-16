@@ -35,7 +35,8 @@ ALLOWED_HOSTS = ["*"] if DEBUG else []
 INSTALLED_APPS = [
     "django.contrib.admin","django.contrib.auth","django.contrib.contenttypes",
     "django.contrib.sessions","django.contrib.messages","django.contrib.staticfiles",
-    "hotel",  # <-- app mới
+    "hotel",
+    'django.contrib.humanize',
 ]
 
 LANGUAGE_CODE = "vi"

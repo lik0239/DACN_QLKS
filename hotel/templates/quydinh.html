@@ -8,119 +8,367 @@
   <ul>
     <li><a href="{% url 'home' %}">Tổng quan</a></li>
     <li><a href="{% url 'room_list' %}">Danh sách phòng</a></li>
-    <li><a href="#">Dịch vụ</a></li>
+    <li><a href="{% url 'services' %}">Dịch vụ</a></li>
     <li><a href="#">Hỏi đáp</a></li>
     <li class="active"><a href="{% url 'policy' %}">Quy định</a></li>
   </ul>
 </nav>
 
-<header class="page-header" style="margin: 24px 0;">
-  <h1>Quy định khách sạn</h1>
-  <p class="text-muted">Áp dụng cho tất cả khách lưu trú tại Mường Thanh Luxury.</p>
-</header>
+<div class="policy-page">
+  <!-- HERO -->
+  <header class="policy-hero">
+    <div class="policy-hero-text">
+      <h1>Quy định khách sạn</h1>
+      <p>Áp dụng cho tất cả khách lưu trú tại Mường Thanh Luxury.</p>
+    </div>
+    <div class="policy-hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">Check-in</span>
+        <span class="meta-value">Từ 14:00</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Check-out</span>
+        <span class="meta-value">Trước 12:00</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Đặt cọc</span>
+        <span class="meta-value">Theo gói phòng</span>
+      </div>
+    </div>
+  </header>
 
-<section class="card">
-  <h2>1. Thời gian nhận – trả phòng</h2>
-  <ul>
-    <li><strong>Nhận phòng (Check-in):</strong> từ 14:00</li>
-    <li><strong>Trả phòng (Check-out):</strong> trước 12:00</li>
-    <li><em>Trả phòng trễ</em> (tuỳ tình trạng phòng): đến 15:00 phụ thu 30% giá phòng; đến 18:00 phụ thu 50%; sau 18:00 tính 100%/đêm.</li>
-    <li>Nhận phòng sớm trước 10:00 phụ thu 50%; từ 10:00–14:00 phụ thu 30%.</li>
-  </ul>
-</section>
+  <!-- TÓM TẮT NHANH -->
+  <section class="policy-summary card">
+    <h2 class="section-title">Tóm tắt nhanh</h2>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-icon">⏰</div>
+        <div class="summary-text">
+          <h3>Nhận / Trả phòng</h3>
+          <p>Nhận từ 14:00, trả trước 12:00. Có phụ thu nếu nhận sớm hoặc trả trễ.</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-icon">💳</div>
+        <div class="summary-text">
+          <h3>Đặt cọc & thanh toán</h3>
+          <p>Đặt cọc khi nhận phòng, thanh toán bằng tiền mặt, thẻ hoặc chuyển khoản.</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-icon">❌</div>
+        <div class="summary-text">
+          <h3>Hủy đặt phòng</h3>
+          <p>Miễn phí trước 5 ngày, sau đó áp dụng phí theo quy định.</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-icon">🚭</div>
+        <div class="summary-text">
+          <h3>Hút thuốc & thú cưng</h3>
+          <p>Không hút thuốc trong phòng, không nhận thú cưng trừ khi có thông báo riêng.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section class="card">
-  <h2>2. Đặt cọc & thanh toán</h2>
-  <ul>
-    <li>Yêu cầu đặt cọc khi nhận phòng (tiền mặt/thẻ) để đảm bảo phát sinh.</li>
-    <li>Chấp nhận: Tiền mặt, thẻ Visa/Master/JCB, chuyển khoản.</li>
-    <li>Hóa đơn VAT: vui lòng cung cấp thông tin công ty khi nhận phòng.</li>
-  </ul>
-</section>
+  <!-- DANH SÁCH QUY ĐỊNH -->
+  <section class="policy-list">
 
-<section class="card">
-  <h2>3. Hủy/Thay đổi đặt phòng</h2>
-  <ul>
-    <li>Miễn phí hủy trước <strong>5 ngày</strong> so với ngày đến.</li>
-    <li>Hủy trong vòng 5 ngày: phạt <strong>100% đêm đầu</strong>.</li>
-    <li>Không đến (No-show): phạt <strong>100% tổng tiền</strong>.</li>
-    <li>Ngày Lễ/Tết có thể áp dụng chính sách riêng.</li>
-  </ul>
-</section>
+    <!-- 1 -->
+    <article class="policy-card">
+      <div class="policy-number">1</div>
+      <div class="policy-content">
+        <h2>Thời gian nhận – trả phòng</h2>
+        <ul>
+          <li><strong>Nhận phòng (Check-in):</strong> từ 14:00.</li>
+          <li><strong>Trả phòng (Check-out):</strong> trước 12:00.</li>
+          <li><em>Trả phòng trễ</em> (tuỳ tình trạng phòng): đến 15:00 phụ thu 30% giá phòng; đến 18:00 phụ thu 50%; sau 18:00 tính 100%/đêm.</li>
+          <li>Nhận phòng sớm trước 10:00 phụ thu 50%; từ 10:00–14:00 phụ thu 30%.</li>
+        </ul>
+      </div>
+    </article>
 
-<section class="card">
-  <h2>4. Trẻ em & giường phụ</h2>
-  <ul>
-    <li>Trẻ dưới 6 tuổi: miễn phí khi ngủ chung giường với bố mẹ.</li>
-    <li>Trẻ 6–11 tuổi: phụ thu ăn sáng theo quy định khách sạn.</li>
-    <li>Từ 12 tuổi: tính như người lớn. Giường phụ (nếu có): phụ thu theo từng hạng phòng.</li>
-  </ul>
-</section>
+    <!-- 2 -->
+    <article class="policy-card">
+      <div class="policy-number">2</div>
+      <div class="policy-content">
+        <h2>Đặt cọc & thanh toán</h2>
+        <ul>
+          <li>Yêu cầu đặt cọc khi nhận phòng (tiền mặt/thẻ) để đảm bảo phát sinh.</li>
+          <li>Chấp nhận: Tiền mặt, thẻ Visa/Master/JCB, chuyển khoản.</li>
+          <li>Hóa đơn VAT: vui lòng cung cấp thông tin công ty khi nhận phòng.</li>
+        </ul>
+      </div>
+    </article>
 
-<section class="card">
-  <h2>5. Hút thuốc, thú cưng & tiếng ồn</h2>
-  <ul>
-    <li><strong>Không hút thuốc</strong> trong phòng/không gian kín. Vi phạm: phụ phí khử mùi/giặt ủi theo thực tế.</li>
-    <li><strong>Không nhận thú cưng</strong> (trừ trường hợp có văn bản đồng ý trước).</li>
-    <li>Giữ yên tĩnh sau 22:00; vui lòng tôn trọng các khách khác.</li>
-  </ul>
-</section>
+    <!-- 3 -->
+    <article class="policy-card">
+      <div class="policy-number">3</div>
+      <div class="policy-content">
+        <h2>Hủy/Thay đổi đặt phòng</h2>
+        <ul>
+          <li>Miễn phí hủy trước <strong>5 ngày</strong> so với ngày đến.</li>
+          <li>Hủy trong vòng 5 ngày: phạt <strong>100% đêm đầu</strong>.</li>
+          <li>Không đến (No-show): phạt <strong>100% tổng tiền</strong>.</li>
+          <li>Ngày Lễ/Tết có thể áp dụng chính sách riêng.</li>
+        </ul>
+      </div>
+    </article>
 
-<section class="card">
-  <h2>6. An toàn & tài sản</h2>
-  <ul>
-    <li>Vui lòng sử dụng <strong>két an toàn</strong> trong phòng cho tài sản giá trị.</li>
-    <li>Khách chịu trách nhiệm cho hư hỏng, mất mát do mình gây ra.</li>
-    <li>Vật dụng thất lạc: liên hệ Lễ tân (Lost &amp; Found) – chúng tôi lưu giữ tối đa 30 ngày.</li>
-  </ul>
-</section>
+    <!-- 4 -->
+    <article class="policy-card">
+      <div class="policy-number">4</div>
+      <div class="policy-content">
+        <h2>Trẻ em & giường phụ</h2>
+        <ul>
+          <li>Trẻ dưới 6 tuổi: miễn phí khi ngủ chung giường với bố mẹ.</li>
+          <li>Trẻ 6–11 tuổi: phụ thu ăn sáng theo quy định khách sạn.</li>
+          <li>Từ 12 tuổi: tính như người lớn. Giường phụ (nếu có): phụ thu theo từng hạng phòng.</li>
+        </ul>
+      </div>
+    </article>
 
-<section class="card">
-  <h2>7. Phụ phí phổ biến</h2>
-  <div class="table-wrap">
-    <table class="charges">
-      <thead>
-        <tr><th>Hạng mục</th><th>Mức phí tham khảo</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Giường phụ</td><td>350.000 – 500.000đ/đêm</td></tr>
-        <tr><td>Trả phòng trễ đến 18:00</td><td>50% giá phòng/đêm</td></tr>
-        <tr><td>Khử mùi thuốc lá trong phòng</td><td>800.000đ/lần</td></tr>
-        <tr><td>Mất thẻ phòng</td><td>100.000đ/thẻ</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="note">* Mức phí có thể thay đổi theo mùa &amp; hạng phòng. Vui lòng liên hệ Lễ tân để biết mức phí chính xác tại thời điểm lưu trú.</p>
-</section>
+    <!-- 5 -->
+    <article class="policy-card">
+      <div class="policy-number">5</div>
+      <div class="policy-content">
+        <h2>Hút thuốc, thú cưng & tiếng ồn</h2>
+        <ul>
+          <li><strong>Không hút thuốc</strong> trong phòng/không gian kín. Vi phạm: phụ phí khử mùi/giặt ủi theo thực tế.</li>
+          <li><strong>Không nhận thú cưng</strong> (trừ trường hợp có văn bản đồng ý trước).</li>
+          <li>Giữ yên tĩnh sau 22:00; vui lòng tôn trọng các khách khác.</li>
+        </ul>
+      </div>
+    </article>
 
-<section class="card">
-  <h2>8. Câu hỏi thường gặp</h2>
-  <div class="faq">
-    <details>
-      <summary>Khách sạn có chỗ đỗ xe không?</summary>
-      Có bãi đỗ xe máy miễn phí; ô tô phụ thuộc chỗ trống trong nhà xe/đối tác gần khách sạn.
-    </details>
-    <details>
-      <summary>Có hồ bơi/ phòng gym không?</summary>
-      Có, mở cửa 06:00–21:00. Vui lòng tuân thủ nội quy khu vực tiện ích.
-    </details>
-    <details>
-      <summary>Ăn sáng phục vụ lúc nào?</summary>
-      06:00–10:00 hàng ngày tại nhà hàng tầng trệt.
-    </details>
-  </div>
-</section>
+    <!-- 6 -->
+    <article class="policy-card">
+      <div class="policy-number">6</div>
+      <div class="policy-content">
+        <h2>An toàn & tài sản</h2>
+        <ul>
+          <li>Vui lòng sử dụng <strong>két an toàn</strong> trong phòng cho tài sản giá trị.</li>
+          <li>Khách chịu trách nhiệm cho hư hỏng, mất mát do mình gây ra.</li>
+          <li>Vật dụng thất lạc: liên hệ Lễ tân (Lost &amp; Found) – chúng tôi lưu giữ tối đa 30 ngày.</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- 7 -->
+    <article class="policy-card">
+      <div class="policy-number">7</div>
+      <div class="policy-content">
+        <h2>Phụ phí phổ biến</h2>
+        <div class="table-wrap">
+          <table class="charges">
+            <thead>
+              <tr><th>Hạng mục</th><th>Mức phí tham khảo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Giường phụ</td><td>350.000 – 500.000đ/đêm</td></tr>
+              <tr><td>Trả phòng trễ đến 18:00</td><td>50% giá phòng/đêm</td></tr>
+              <tr><td>Khử mùi thuốc lá trong phòng</td><td>800.000đ/lần</td></tr>
+              <tr><td>Mất thẻ phòng</td><td>100.000đ/thẻ</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">* Mức phí có thể thay đổi theo mùa &amp; hạng phòng. Vui lòng liên hệ Lễ tân để biết mức phí chính xác tại thời điểm lưu trú.</p>
+      </div>
+    </article>
+
+    <!-- 8 -->
+    <article class="policy-card">
+      <div class="policy-number">8</div>
+      <div class="policy-content">
+        <h2>Câu hỏi thường gặp</h2>
+        <div class="faq">
+          <details>
+            <summary>Khách sạn có chỗ đỗ xe không?</summary>
+            Có bãi đỗ xe máy miễn phí; ô tô phụ thuộc chỗ trống trong nhà xe/đối tác gần khách sạn.
+          </details>
+          <details>
+            <summary>Có hồ bơi/ phòng gym không?</summary>
+            Có, mở cửa 06:00–21:00. Vui lòng tuân thủ nội quy khu vực tiện ích.
+          </details>
+          <details>
+            <summary>Ăn sáng phục vụ lúc nào?</summary>
+            06:00–10:00 hàng ngày tại nhà hàng tầng trệt.
+          </details>
+        </div>
+      </div>
+    </article>
+
+  </section>
+</div>
 
 <style>
-  .card{background:#fff;border-radius:12px;padding:20px;margin:16px 0;box-shadow:0 4px 14px rgba(0,0,0,.06)}
-  .table-wrap{overflow:auto}
-  table.charges{width:100%;border-collapse:collapse}
-  table.charges th, table.charges td{border:1px solid #eee;padding:10px;text-align:left}
-  table.charges th{background:#fafafa}
-  .note{font-size:.95rem;color:#666}
-  .faq details{border:1px solid #eee;border-radius:10px;padding:12px;margin:8px 0}
-  .faq summary{cursor:pointer;font-weight:600}
-  .page-header h1{margin:0}
-  .text-muted{color:#6b7280}
+  :root { --policy-max: 1100px; }
+
+  .policy-page{
+    max-width:var(--policy-max);
+    width:min(94vw,var(--policy-max));
+    margin:24px auto 40px;
+  }
+
+  /* HERO */
+  .policy-hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:24px;
+    padding:8px 4px 18px;
+    border-bottom:1px solid #e5e7eb;
+    margin-bottom:18px;
+  }
+  .policy-hero-text h1{
+    margin:0;
+    font-size:2rem;
+    color:#111827;
+  }
+  .policy-hero-text p{
+    margin:4px 0 0;
+    color:#6b7280;
+  }
+  .policy-hero-meta{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .meta-item{
+    min-width:130px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:#f3f4ff;
+    border:1px solid #e5e7ff;
+  }
+  .meta-label{
+    display:block;
+    font-size:.7rem;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:#6b7280;
+  }
+  .meta-value{
+    font-weight:600;
+    color:#111827;
+    font-size:.9rem;
+  }
+
+  /* Card chung */
+  .card{
+    background:#fff;
+    border-radius:14px;
+    padding:18px 20px;
+    box-shadow:0 8px 24px rgba(0,0,0,.06);
+    margin:18px 0;
+  }
+  .section-title{
+    margin:0 0 10px;
+    font-size:1.2rem;
+    color:#111827;
+  }
+
+  /* Summary */
+  .summary-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(220px,1fr));
+    gap:14px;
+  }
+  .summary-item{
+    display:flex;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+  }
+  .summary-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.3rem;
+    background:#fff;
+  }
+  .summary-text h3{
+    margin:0 0 4px;
+    font-size:.95rem;
+  }
+  .summary-text p{
+    margin:0;
+    font-size:.85rem;
+    color:#4b5563;
+  }
+
+  /* Policy cards */
+  .policy-list{margin-top:10px;}
+  .policy-card{
+    display:flex;
+    gap:16px;
+    background:#fff;
+    border-radius:16px;
+    padding:16px 18px;
+    margin:12px 0;
+    box-shadow:0 4px 18px rgba(0,0,0,.04);
+  }
+  .policy-number{
+    flex:0 0 32px;
+    height:32px;
+    border-radius:999px;
+    background:#f97316;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    margin-top:4px;
+    box-shadow:0 2px 6px rgba(249,115,22,.4);
+  }
+  .policy-content h2{
+    margin:0 0 6px;
+    font-size:1.05rem;
+    color:#111827;
+  }
+  .policy-content ul{
+    margin:4px 0 0 18px;
+    padding:0;
+    color:#4b5563;
+    font-size:.9rem;
+  }
+  .policy-content li + li{margin-top:4px;}
+
+  /* Table phụ phí */
+  .table-wrap{overflow:auto;margin-top:8px;}
+  table.charges{width:100%;border-collapse:collapse;font-size:.9rem;}
+  table.charges th, table.charges td{
+    border:1px solid #e5e7eb;
+    padding:8px 10px;
+    text-align:left;
+  }
+  table.charges th{background:#f9fafb;font-weight:600;}
+  .note{margin-top:6px;color:#6b7280;font-size:.85rem;}
+
+  /* FAQ */
+  .faq details{
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    padding:10px 12px;
+    margin:6px 0;
+    font-size:.9rem;
+    background:#f9fafb;
+  }
+  .faq summary{
+    cursor:pointer;
+    font-weight:600;
+    outline:none;
+  }
+
+  @media (max-width: 768px){
+    .policy-hero{flex-direction:column;align-items:flex-start;}
+    .summary-grid{grid-template-columns:1fr;}
+  }
 </style>
 {% endblock %}

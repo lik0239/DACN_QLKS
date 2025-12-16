@@ -5,7 +5,7 @@
 -- Dumped from database version 17.3
 -- Dumped by pg_dump version 17.3
 
--- Started on 2025-10-03 14:21:32
+-- Started on 2025-11-21 03:28:20
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -218,6 +218,7 @@ CREATE TABLE public.datphong (
     ngaynhan date,
     ngaytra date,
     trangthai text,
+    phuongthucthanhtoan_du_kien character varying(20),
     CONSTRAINT chk_datphong_dates CHECK (((ngaytra IS NULL) OR (ngaynhan IS NULL) OR (ngaytra > ngaynhan)))
 );
 
@@ -515,7 +516,8 @@ CREATE TABLE public.phong (
     maphong integer NOT NULL,
     sophong text,
     maloaiphong integer NOT NULL,
-    trangthai text
+    trangthai text,
+    anh character varying(255)
 );
 
 
@@ -601,6 +603,69 @@ ALTER TABLE public.taikhoan ALTER COLUMN mataikhoan ADD GENERATED ALWAYS AS IDEN
 
 
 --
+-- TOC entry 257 (class 1259 OID 17484)
+-- Name: taikhoankhachhang; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.taikhoankhachhang (
+    mataikhoan integer NOT NULL,
+    makhachhang integer NOT NULL,
+    tentaikhoan text NOT NULL,
+    matkhau text NOT NULL,
+    email text
+);
+
+
+ALTER TABLE public.taikhoankhachhang OWNER TO postgres;
+
+--
+-- TOC entry 256 (class 1259 OID 17483)
+-- Name: taikhoankhachhang_mataikhoan_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.taikhoankhachhang ALTER COLUMN mataikhoan ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.taikhoankhachhang_mataikhoan_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 259 (class 1259 OID 17501)
+-- Name: taikhoannhanvien; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.taikhoannhanvien (
+    mataikhoan integer NOT NULL,
+    manhanvien integer NOT NULL,
+    tentaikhoan text NOT NULL,
+    matkhau text NOT NULL,
+    email text,
+    vaitro text
+);
+
+
+ALTER TABLE public.taikhoannhanvien OWNER TO postgres;
+
+--
+-- TOC entry 258 (class 1259 OID 17500)
+-- Name: taikhoannhanvien_mataikhoan_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.taikhoannhanvien ALTER COLUMN mataikhoan ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.taikhoannhanvien_mataikhoan_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
 -- TOC entry 228 (class 1259 OID 17065)
 -- Name: thanhtoan; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -633,7 +698,7 @@ ALTER TABLE public.thanhtoan ALTER COLUMN mathanhtoan ADD GENERATED ALWAYS AS ID
 
 
 --
--- TOC entry 5062 (class 0 OID 17161)
+-- TOC entry 5086 (class 0 OID 17161)
 -- Dependencies: 244
 -- Data for Name: auth_group; Type: TABLE DATA; Schema: public; Owner: app_user
 --
@@ -643,7 +708,7 @@ COPY public.auth_group (id, name) FROM stdin;
 
 
 --
--- TOC entry 5064 (class 0 OID 17169)
+-- TOC entry 5088 (class 0 OID 17169)
 -- Dependencies: 246
 -- Data for Name: auth_group_permissions; Type: TABLE DATA; Schema: public; Owner: app_user
 --
@@ -653,7 +718,7 @@ COPY public.auth_group_permissions (id, group_id, permission_id) FROM stdin;
 
 
 --
--- TOC entry 5060 (class 0 OID 17155)
+-- TOC entry 5084 (class 0 OID 17155)
 -- Dependencies: 242
 -- Data for Name: auth_permission; Type: TABLE DATA; Schema: public; Owner: app_user
 --
@@ -683,23 +748,115 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 22	Can change session	6	change_session
 23	Can delete session	6	delete_session
 24	Can view session	6	view_session
+25	Can add auth group	14	add_authgroup
+26	Can change auth group	14	change_authgroup
+27	Can delete auth group	14	delete_authgroup
+28	Can view auth group	14	view_authgroup
+29	Can add auth group permissions	15	add_authgrouppermissions
+30	Can change auth group permissions	15	change_authgrouppermissions
+31	Can delete auth group permissions	15	delete_authgrouppermissions
+32	Can view auth group permissions	15	view_authgrouppermissions
+33	Can add auth permission	16	add_authpermission
+34	Can change auth permission	16	change_authpermission
+35	Can delete auth permission	16	delete_authpermission
+36	Can view auth permission	16	view_authpermission
+37	Can add auth user	17	add_authuser
+38	Can change auth user	17	change_authuser
+39	Can delete auth user	17	delete_authuser
+40	Can view auth user	17	view_authuser
+41	Can add auth user groups	18	add_authusergroups
+42	Can change auth user groups	18	change_authusergroups
+43	Can delete auth user groups	18	delete_authusergroups
+44	Can view auth user groups	18	view_authusergroups
+45	Can add auth user user permissions	19	add_authuseruserpermissions
+46	Can change auth user user permissions	19	change_authuseruserpermissions
+47	Can delete auth user user permissions	19	delete_authuseruserpermissions
+48	Can view auth user user permissions	19	view_authuseruserpermissions
+49	Can add datphong	11	add_datphong
+50	Can change datphong	11	change_datphong
+51	Can delete datphong	11	delete_datphong
+52	Can view datphong	11	view_datphong
+53	Can add dichvu	12	add_dichvu
+54	Can change dichvu	12	change_dichvu
+55	Can delete dichvu	12	delete_dichvu
+56	Can view dichvu	12	view_dichvu
+57	Can add django admin log	20	add_djangoadminlog
+58	Can change django admin log	20	change_djangoadminlog
+59	Can delete django admin log	20	delete_djangoadminlog
+60	Can view django admin log	20	view_djangoadminlog
+61	Can add django content type	21	add_djangocontenttype
+62	Can change django content type	21	change_djangocontenttype
+63	Can delete django content type	21	delete_djangocontenttype
+64	Can view django content type	21	view_djangocontenttype
+65	Can add django migrations	22	add_djangomigrations
+66	Can change django migrations	22	change_djangomigrations
+67	Can delete django migrations	22	delete_djangomigrations
+68	Can view django migrations	22	view_djangomigrations
+69	Can add django session	23	add_djangosession
+70	Can change django session	23	change_djangosession
+71	Can delete django session	23	delete_djangosession
+72	Can view django session	23	view_djangosession
+73	Can add hoadon	24	add_hoadon
+74	Can change hoadon	24	change_hoadon
+75	Can delete hoadon	24	delete_hoadon
+76	Can view hoadon	24	view_hoadon
+77	Can add khachhang	7	add_khachhang
+78	Can change khachhang	7	change_khachhang
+79	Can delete khachhang	7	delete_khachhang
+80	Can view khachhang	7	view_khachhang
+81	Can add loaiphong	10	add_loaiphong
+82	Can change loaiphong	10	change_loaiphong
+83	Can delete loaiphong	10	delete_loaiphong
+84	Can view loaiphong	10	view_loaiphong
+85	Can add nhanvien	25	add_nhanvien
+86	Can change nhanvien	25	change_nhanvien
+87	Can delete nhanvien	25	delete_nhanvien
+88	Can view nhanvien	25	view_nhanvien
+89	Can add phong	9	add_phong
+90	Can change phong	9	change_phong
+91	Can delete phong	9	delete_phong
+92	Can view phong	9	view_phong
+93	Can add sudungdichvu	26	add_sudungdichvu
+94	Can change sudungdichvu	26	change_sudungdichvu
+95	Can delete sudungdichvu	26	delete_sudungdichvu
+96	Can view sudungdichvu	26	view_sudungdichvu
+97	Can add taikhoan	8	add_taikhoan
+98	Can change taikhoan	8	change_taikhoan
+99	Can delete taikhoan	8	delete_taikhoan
+100	Can view taikhoan	8	view_taikhoan
+101	Can add tai khoan khach hang	27	add_taikhoankhachhang
+102	Can change tai khoan khach hang	27	change_taikhoankhachhang
+103	Can delete tai khoan khach hang	27	delete_taikhoankhachhang
+104	Can view tai khoan khach hang	27	view_taikhoankhachhang
+105	Can add tai khoan nhan vien	13	add_taikhoannhanvien
+106	Can change tai khoan nhan vien	13	change_taikhoannhanvien
+107	Can delete tai khoan nhan vien	13	delete_taikhoannhanvien
+108	Can view tai khoan nhan vien	13	view_taikhoannhanvien
+109	Can add thanhtoan	28	add_thanhtoan
+110	Can change thanhtoan	28	change_thanhtoan
+111	Can delete thanhtoan	28	delete_thanhtoan
+112	Can view thanhtoan	28	view_thanhtoan
 \.
 
 
 --
--- TOC entry 5066 (class 0 OID 17175)
+-- TOC entry 5090 (class 0 OID 17175)
 -- Dependencies: 248
 -- Data for Name: auth_user; Type: TABLE DATA; Schema: public; Owner: app_user
 --
 
 COPY public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
-1	pbkdf2_sha256$1000000$6C4A5nteCnJeVaU6RU4XUV$I6Kd4Q9g3ff6hJtKmohES+IjkTRRpCEALd+1m5FJE5w=	2025-09-29 01:10:46.221044+07	t	lenovo			lik04032004@gmail.com	t	t	2025-09-28 01:05:11.92897+07
 2	!wnwFo94wyuPd8D2BwiaNh45aLgd4eo8IR9NXWo7t	2025-09-29 01:30:31.127766+07	f	quochuy			quochuy@example.com	f	t	2025-09-29 01:29:57.693755+07
+1	pbkdf2_sha256$1000000$6C4A5nteCnJeVaU6RU4XUV$I6Kd4Q9g3ff6hJtKmohES+IjkTRRpCEALd+1m5FJE5w=	2025-11-14 20:50:33.070745+07	t	lenovo			lik04032004@gmail.com	t	t	2025-09-28 01:05:11.92897+07
+5	!pCc8e9DLtB6q0pKuf69MRdiqcTUwsBVj0S1aW90O	2025-11-21 02:35:09.637205+07	f	chihan				f	t	2025-10-09 21:11:39.210426+07
+3	!sUAFzk2zzDi8dg2RpMC2m1KwlBbLucKj8ma8w2xi	2025-10-26 01:35:45.755056+07	f	minhanh			minhanh@example.com	f	t	2025-10-04 20:16:10.199963+07
+4	!M1HkkCpmTxoPPJDcJnMwte4fmjGnYUhf6DvjsJy1	2025-11-21 03:23:00.727623+07	f	linhkt			linh.ketoan@example.com	f	t	2025-10-04 20:16:57.93771+07
+6	!KnvKFXFVWq3jzRgs2omJQ3C2BFnZcT0QhNufA8JG	2025-11-21 03:23:07.667886+07	f	quanly				f	t	2025-11-21 02:46:37.24349+07
 \.
 
 
 --
--- TOC entry 5068 (class 0 OID 17183)
+-- TOC entry 5092 (class 0 OID 17183)
 -- Dependencies: 250
 -- Data for Name: auth_user_groups; Type: TABLE DATA; Schema: public; Owner: app_user
 --
@@ -709,7 +866,7 @@ COPY public.auth_user_groups (id, user_id, group_id) FROM stdin;
 
 
 --
--- TOC entry 5070 (class 0 OID 17189)
+-- TOC entry 5094 (class 0 OID 17189)
 -- Dependencies: 252
 -- Data for Name: auth_user_user_permissions; Type: TABLE DATA; Schema: public; Owner: app_user
 --
@@ -719,22 +876,49 @@ COPY public.auth_user_user_permissions (id, user_id, permission_id) FROM stdin;
 
 
 --
--- TOC entry 5042 (class 0 OID 17029)
+-- TOC entry 5066 (class 0 OID 17029)
 -- Dependencies: 224
 -- Data for Name: datphong; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.datphong (madatphong, makhachhang, maphong, ngaydat, ngaynhan, ngaytra, trangthai) FROM stdin;
-1	1	1	2025-09-10	2025-09-12	2025-09-14	Hoàn thành
-2	2	3	2025-09-15	2025-09-20	2025-09-22	Hoàn thành
-3	3	4	2025-09-20	2025-09-27	2025-09-30	Đang ở
-4	4	2	2025-09-25	2025-10-02	2025-10-05	Đã xác nhận
-5	5	5	2025-09-23	2025-10-10	2025-10-12	Đang chờ
+COPY public.datphong (madatphong, makhachhang, maphong, ngaydat, ngaynhan, ngaytra, trangthai, phuongthucthanhtoan_du_kien) FROM stdin;
+1	1	1	2025-09-10	2025-09-12	2025-09-14	Hoàn thành	\N
+2	2	3	2025-09-15	2025-09-20	2025-09-22	Hoàn thành	\N
+3	3	4	2025-09-20	2025-09-27	2025-09-30	Đang ở	\N
+4	4	2	2025-09-25	2025-10-02	2025-10-05	Đã xác nhận	\N
+5	5	5	2025-09-23	2025-10-10	2025-10-12	Đang chờ	\N
+6	6	1	2025-10-25	2025-10-27	2025-10-28	Đã đặt	\N
+7	1	5	2025-10-25	2025-10-28	2025-10-29	Đã đặt	\N
+39	6	3	2025-11-20	2025-11-21	2025-11-22	huy	vietqr
+40	6	7	2025-11-20	2025-11-21	2025-11-22	xacnhan	vietqr
+12	6	2	\N	2025-10-26	2025-10-28	hoanthanh	\N
+15	6	5	\N	2025-10-27	2025-10-29	hoanthanh	\N
+14	6	4	\N	2025-10-27	2025-10-29	hoanthanh	\N
+13	6	3	\N	2025-10-27	2025-10-29	hoanthanh	\N
+16	6	2	\N	2025-10-27	2025-10-29	hoanthanh	\N
+17	6	4	\N	2025-11-07	2025-11-08	hoanthanh	\N
+18	6	1	\N	2025-11-08	2025-11-09	xacnhan	\N
+20	6	5	\N	2025-11-08	2025-11-10	xacnhan	\N
+19	6	5	\N	2025-11-08	2025-11-10	xacnhan	\N
+22	6	2	\N	2025-11-11	2025-11-12	xacnhan	\N
+21	6	3	\N	2025-11-09	2025-11-11	hoanthanh	\N
+25	6	6	\N	2025-11-11	2025-11-12	xacnhan	\N
+26	6	6	\N	2025-11-13	2025-11-14	xacnhan	\N
+27	6	2	\N	2025-11-14	2025-11-15	xacnhan	\N
+29	6	6	\N	2025-11-14	2025-11-17	hoanthanh	\N
+28	6	5	\N	2025-11-14	2025-11-15	xacnhan	\N
+31	6	3	\N	2025-11-19	2025-11-21	xacnhan	\N
+30	6	6	\N	2025-11-19	2025-11-21	huy	\N
+32	6	1	\N	2025-11-20	2025-11-22	huy	\N
+34	6	7	\N	2025-11-21	2025-11-22	huy	\N
+36	6	7	\N	2025-11-21	2025-11-22	huy	card
+38	6	4	\N	2025-11-21	2025-11-22	huy	vietqr
+33	6	6	\N	2025-11-20	2025-11-21	hoanthanh	\N
 \.
 
 
 --
--- TOC entry 5050 (class 0 OID 17087)
+-- TOC entry 5074 (class 0 OID 17087)
 -- Dependencies: 232
 -- Data for Name: dichvu; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -743,23 +927,33 @@ COPY public.dichvu (madichvu, tendichvu, mota, gia) FROM stdin;
 1	Breakfast	Bữa sáng buffet	120000.00
 2	AirportPickup	Đưa đón sân bay	250000.00
 3	Laundry	Giặt ủi	60000.00
-4	Spa	Massage thư giãn	400000.00
 5	MiniBar	Nước uống – snack	80000.00
+6	Thuê xe máy	Thuê xe máy theo ngày, giao nhận tại khách sạn.	150000.00
+8	Set up hoa sinh nhật	Trang trí hoa và bong bóng mừng sinh nhật trong phòng.	350000.00
+4	Spa & massage	Gói massage thư giãn toàn thân 60 phút.	400000.00
+7	Trang trí phòng	Trang trí phòng tuần trăng mật với hoa và nến.	600000.00
 \.
 
 
 --
--- TOC entry 5072 (class 0 OID 17247)
+-- TOC entry 5096 (class 0 OID 17247)
 -- Dependencies: 254
 -- Data for Name: django_admin_log; Type: TABLE DATA; Schema: public; Owner: app_user
 --
 
 COPY public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) FROM stdin;
+1	2025-10-10 15:55:07.726891+07	1	Phong object (1)	2	[{"changed": {"fields": ["Anh"]}}]	9	1
+2	2025-10-10 15:55:49.975611+07	5	Phong object (5)	2	[{"changed": {"fields": ["Anh"]}}]	9	1
+3	2025-10-10 15:55:57.594805+07	4	Phong object (4)	2	[{"changed": {"fields": ["Anh"]}}]	9	1
+4	2025-10-10 15:56:04.542076+07	3	Phong object (3)	2	[{"changed": {"fields": ["Anh"]}}]	9	1
+5	2025-10-10 15:56:12.447732+07	2	Phong object (2)	2	[{"changed": {"fields": ["Anh"]}}]	9	1
+6	2025-10-27 09:18:16.653055+07	6	Phong object (6)	1	[{"added": {}}]	9	1
+7	2025-11-14 20:51:25.558266+07	7	Phong object (7)	1	[{"added": {}}]	9	1
 \.
 
 
 --
--- TOC entry 5058 (class 0 OID 17147)
+-- TOC entry 5082 (class 0 OID 17147)
 -- Dependencies: 240
 -- Data for Name: django_content_type; Type: TABLE DATA; Schema: public; Owner: app_user
 --
@@ -772,11 +966,32 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 5	contenttypes	contenttype
 6	sessions	session
 7	hotel	khachhang
+8	hotel	taikhoan
+9	hotel	phong
+10	hotel	loaiphong
+11	hotel	datphong
+12	hotel	dichvu
+13	hotel	taikhoannhanvien
+14	hotel	authgroup
+15	hotel	authgrouppermissions
+16	hotel	authpermission
+17	hotel	authuser
+18	hotel	authusergroups
+19	hotel	authuseruserpermissions
+20	hotel	djangoadminlog
+21	hotel	djangocontenttype
+22	hotel	djangomigrations
+23	hotel	djangosession
+24	hotel	hoadon
+25	hotel	nhanvien
+26	hotel	sudungdichvu
+27	hotel	taikhoankhachhang
+28	hotel	thanhtoan
 \.
 
 
 --
--- TOC entry 5056 (class 0 OID 17139)
+-- TOC entry 5080 (class 0 OID 17139)
 -- Dependencies: 238
 -- Data for Name: django_migrations; Type: TABLE DATA; Schema: public; Owner: app_user
 --
@@ -800,21 +1015,26 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 16	auth	0011_update_proxy_permissions	2025-09-28 01:04:18.183059+07
 17	auth	0012_alter_user_first_name_max_length	2025-09-28 01:04:18.188125+07
 18	sessions	0001_initial	2025-09-28 01:04:18.1981+07
+19	hotel	0001_initial	2025-11-21 01:48:40.066682+07
 \.
 
 
 --
--- TOC entry 5073 (class 0 OID 17275)
+-- TOC entry 5097 (class 0 OID 17275)
 -- Dependencies: 255
 -- Data for Name: django_session; Type: TABLE DATA; Schema: public; Owner: app_user
 --
 
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
+znjdv1s0r568tmi9sl50dpiqg5sw21d0	.eJxVjEEOwiAQRe_C2pBBkIJL956BDMOMVA1NSrsy3l2bdKHb_977L5VwXWpaO89pLOqsjDr8bhnpwW0D5Y7tNmma2jKPWW-K3mnX16nw87K7fwcVe_3W4pA8IAzOWWOChGhBJMcIxTsWC5bEckAhE0_OCpGPwgMaNiQER_X-AOP9OGM:1vJuC9:THE7iBWKJhXEPoiEfA3RshEKuaOuYmHhcLF-mkN75co	2025-11-28 20:50:33.073001+07
+z1klgaza5s039kw8xpd26vohtcn0xzmr	.eJxVj8FugzAQRP9lz8jCxJDAqeq5jZRLr9barIsTY1MwVaMo_96lzaG9zrx50txA45oHvS40a99DBw0UfzOD9kJxK_ozxvckbIp59kZsiHi0i3hNPYXnB_tPMOAy8LpVe3cgRKWUVK0ztds7V1UN2YN0tpZSNsbZVlEjyVhpyrKsS3Rmp6paYrNj6eaE7gYhoWfj8Y2zEXVGry9DwghdVcA0J-cD_XxRBXyiz3Ni-rRifLnygkb0gYNpwCw-OA3XJ_rCcQrE30YmMrEKfiu4378BQhpftg:1vMBBL:_zJ5fippxYn2jNk3hJd3VZnSMSb-urrlYwgRZ4UrGok	2025-12-05 03:23:07.670204+07
+g4jerjotdamtfloy5xqri68s826pxbni	.eJxVjzFvwyAQRv_LzRYCm9qxp6pr1U5RV3TAUYgxRDapKkX578WVh3Z937sn3R0U3opXt41WFSxMIKH5yzSamdI-2Aumz8xMTmUNmu0KO9aNvWVL8eVw_wU8br5e85PoXduJYdTiabCCW9OLTkijnXbSEO9aPgqy_dAh1w6ls_w0SCOp06MUVKN7E6Y7xIyhFt8_KltQFQxq9hkTTKKB65pdiPT7S9vAF4bzmqv9SuddaYAWDLGCGJJnM5VKn-kbl2uk-ttSjULp2OcCj8cP8cdfFw:1vIYQW:rBIyfNuMkfHDPdJxJlz_IxCrXBqtHN7vy4KaoHFg1J4	2025-11-25 03:23:48.192596+07
+7ok3fwvk1q3uzgc7jn8wj1lydlv1q7a4	.eJxVjEEOwiAQRe_C2pBBkIJL956BDMOMVA1NSrsy3l2bdKHb_977L5VwXWpaO89pLOqsjDr8bhnpwW0D5Y7tNmma2jKPWW-K3mnX16nw87K7fwcVe_3W4pA8IAzOWWOChGhBJMcIxTsWC5bEckAhE0_OCpGPwgMaNiQER_X-AOP9OGM:1v7882:dhV4oqkQ8Ccs-HeUmbzpy2wubjkAGlgTY43_lwUz_9M	2025-10-24 15:05:30.551828+07
 \.
 
 
 --
--- TOC entry 5044 (class 0 OID 17051)
+-- TOC entry 5068 (class 0 OID 17051)
 -- Dependencies: 226
 -- Data for Name: hoadon; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -829,7 +1049,7 @@ COPY public.hoadon (mahoadon, madatphong, ngayphathanh, tienphong, tiendichvu, t
 
 
 --
--- TOC entry 5036 (class 0 OID 16997)
+-- TOC entry 5060 (class 0 OID 16997)
 -- Dependencies: 218
 -- Data for Name: khachhang; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -840,11 +1060,12 @@ COPY public.khachhang (makhachhang, tenkhachhang, cccd, sdt, email, diachi, ngay
 3	Lê Quốc Huy	012345678903	0911000003	quochuy@example.com	Q.10, TP.HCM	1992-01-15
 4	Phạm Bảo Ngọc	012345678904	0911000004	baongoc@example.com	TP. Thủ Đức	2000-07-09
 5	Đỗ Nhật Nam	012345678905	0911000005	nhatnam@example.com	Q.7, TP.HCM	1999-12-30
+6	Hà Chí Hân	123	0337681958	han@123gmail.com	a	2025-10-01
 \.
 
 
 --
--- TOC entry 5038 (class 0 OID 17007)
+-- TOC entry 5062 (class 0 OID 17007)
 -- Dependencies: 220
 -- Data for Name: loaiphong; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -859,7 +1080,7 @@ COPY public.loaiphong (maloaiphong, tenloaiphong, mota, gia) FROM stdin;
 
 
 --
--- TOC entry 5048 (class 0 OID 17079)
+-- TOC entry 5072 (class 0 OID 17079)
 -- Dependencies: 230
 -- Data for Name: nhanvien; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -874,22 +1095,24 @@ COPY public.nhanvien (manhanvien, hoten, sdt, email, chucvu, luong, ngayvaolam) 
 
 
 --
--- TOC entry 5040 (class 0 OID 17015)
+-- TOC entry 5064 (class 0 OID 17015)
 -- Dependencies: 222
 -- Data for Name: phong; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.phong (maphong, sophong, maloaiphong, trangthai) FROM stdin;
-1	101	1	Trống
-2	102	1	Trống
-3	201	2	Trống
-4	301	3	Trống
-5	401	4	Trống
+COPY public.phong (maphong, sophong, maloaiphong, trangthai, anh) FROM stdin;
+5	401	4	Trống	rooms/401/f85ed38afa444d99b2b47b55ad400e20.jpg
+4	301	3	Trống	rooms/301/a16f42291feb4277b8e8dc651c359406.jpg
+6	203	2	Trống	rooms/203/7398434bbba94d158cd977d137052012.jpg
+3	201	2	Trống	rooms/201/2614e841e57b40d2afa7a7796550c161.jpg
+7	405	3	Đã đặt	rooms/405/13eb15eecbf5457c88cdc43d76c7ac3e.jpg
+2	102	1	Trống	rooms/102/71c57b564ebb49c7a99b056c3845001c.jpg
+1	101	1	Trống	rooms/101/3e36c61013164d818184fa949a0044ec.jpg
 \.
 
 
 --
--- TOC entry 5052 (class 0 OID 17095)
+-- TOC entry 5076 (class 0 OID 17095)
 -- Dependencies: 234
 -- Data for Name: sudungdichvu; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -900,11 +1123,23 @@ COPY public.sudungdichvu (masddv, madatphong, madichvu, soluong, tongtien) FROM 
 3	3	5	3	240000.00
 4	4	3	5	300000.00
 5	5	4	1	400000.00
+6	25	1	1	120000.00
+7	26	7	1	600000.00
+8	27	1	1	120000.00
+9	28	1	1	120000.00
+10	29	1	1	120000.00
+11	30	3	1	60000.00
+12	31	1	1	120000.00
+13	32	2	1	250000.00
+14	33	1	1	120000.00
+16	36	2	1	250000.00
+18	39	2	1	250000.00
+19	40	1	1	120000.00
 \.
 
 
 --
--- TOC entry 5054 (class 0 OID 17113)
+-- TOC entry 5078 (class 0 OID 17113)
 -- Dependencies: 236
 -- Data for Name: taikhoan; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -919,7 +1154,38 @@ COPY public.taikhoan (mataikhoan, makhachhang, manhanvien, tentaikhoan, matkhau,
 
 
 --
--- TOC entry 5046 (class 0 OID 17065)
+-- TOC entry 5099 (class 0 OID 17484)
+-- Dependencies: 257
+-- Data for Name: taikhoankhachhang; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.taikhoankhachhang (mataikhoan, makhachhang, tentaikhoan, matkhau, email) FROM stdin;
+1	1	minhanh	Pass#2025	minhanh@example.com
+2	2	thuha	Pass#2025	thuha@example.com
+3	3	quochuy	Pass#2025	quochuy@example.com
+4	4	baongoc	Pass#2025	baongoc@example.com
+5	5	nhatnam	Pass#2025	nhatnam@example.com
+6	6	chihan	Pass#2025	han@123gmail.com
+\.
+
+
+--
+-- TOC entry 5101 (class 0 OID 17501)
+-- Dependencies: 259
+-- Data for Name: taikhoannhanvien; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.taikhoannhanvien (mataikhoan, manhanvien, tentaikhoan, matkhau, email, vaitro) FROM stdin;
+1	2	linhkt	Emp#2025	linh.ketoan@example.com	KeToan
+2	4	quanly	Emp#2025	phat.quanly@example.com	QuanLy
+3	1	tunglt	Emp#2025	tung.le-tan@example.com	LeTan
+4	3	longhk	Emp#2025	long.hk@example.com	Housekeeping
+5	5	huykt	Emp#2025	huy.kythuat@example.com	KyThuat
+\.
+
+
+--
+-- TOC entry 5070 (class 0 OID 17065)
 -- Dependencies: 228
 -- Data for Name: thanhtoan; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -934,7 +1200,7 @@ COPY public.thanhtoan (mathanhtoan, mahoadon, sotien, hinhthucthanhtoan, thoigia
 
 
 --
--- TOC entry 5100 (class 0 OID 0)
+-- TOC entry 5132 (class 0 OID 0)
 -- Dependencies: 243
 -- Name: auth_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
@@ -943,7 +1209,7 @@ SELECT pg_catalog.setval('public.auth_group_id_seq', 1, false);
 
 
 --
--- TOC entry 5101 (class 0 OID 0)
+-- TOC entry 5133 (class 0 OID 0)
 -- Dependencies: 245
 -- Name: auth_group_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
@@ -952,16 +1218,16 @@ SELECT pg_catalog.setval('public.auth_group_permissions_id_seq', 1, false);
 
 
 --
--- TOC entry 5102 (class 0 OID 0)
+-- TOC entry 5134 (class 0 OID 0)
 -- Dependencies: 241
 -- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.auth_permission_id_seq', 24, true);
+SELECT pg_catalog.setval('public.auth_permission_id_seq', 112, true);
 
 
 --
--- TOC entry 5103 (class 0 OID 0)
+-- TOC entry 5135 (class 0 OID 0)
 -- Dependencies: 249
 -- Name: auth_user_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
@@ -970,16 +1236,16 @@ SELECT pg_catalog.setval('public.auth_user_groups_id_seq', 1, false);
 
 
 --
--- TOC entry 5104 (class 0 OID 0)
+-- TOC entry 5136 (class 0 OID 0)
 -- Dependencies: 247
 -- Name: auth_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.auth_user_id_seq', 2, true);
+SELECT pg_catalog.setval('public.auth_user_id_seq', 6, true);
 
 
 --
--- TOC entry 5105 (class 0 OID 0)
+-- TOC entry 5137 (class 0 OID 0)
 -- Dependencies: 251
 -- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
@@ -988,52 +1254,52 @@ SELECT pg_catalog.setval('public.auth_user_user_permissions_id_seq', 1, false);
 
 
 --
--- TOC entry 5106 (class 0 OID 0)
+-- TOC entry 5138 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: datphong_madatphong_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.datphong_madatphong_seq', 5, true);
+SELECT pg_catalog.setval('public.datphong_madatphong_seq', 40, true);
 
 
 --
--- TOC entry 5107 (class 0 OID 0)
+-- TOC entry 5139 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: dichvu_madichvu_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.dichvu_madichvu_seq', 5, true);
+SELECT pg_catalog.setval('public.dichvu_madichvu_seq', 8, true);
 
 
 --
--- TOC entry 5108 (class 0 OID 0)
+-- TOC entry 5140 (class 0 OID 0)
 -- Dependencies: 253
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 1, false);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 7, true);
 
 
 --
--- TOC entry 5109 (class 0 OID 0)
+-- TOC entry 5141 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.django_content_type_id_seq', 7, true);
+SELECT pg_catalog.setval('public.django_content_type_id_seq', 28, true);
 
 
 --
--- TOC entry 5110 (class 0 OID 0)
+-- TOC entry 5142 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 18, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 19, true);
 
 
 --
--- TOC entry 5111 (class 0 OID 0)
+-- TOC entry 5143 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: hoadon_mahoadon_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1042,16 +1308,16 @@ SELECT pg_catalog.setval('public.hoadon_mahoadon_seq', 5, true);
 
 
 --
--- TOC entry 5112 (class 0 OID 0)
+-- TOC entry 5144 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: khachhang_makhachhang_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.khachhang_makhachhang_seq', 5, true);
+SELECT pg_catalog.setval('public.khachhang_makhachhang_seq', 6, true);
 
 
 --
--- TOC entry 5113 (class 0 OID 0)
+-- TOC entry 5145 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: loaiphong_maloaiphong_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1060,7 +1326,7 @@ SELECT pg_catalog.setval('public.loaiphong_maloaiphong_seq', 5, true);
 
 
 --
--- TOC entry 5114 (class 0 OID 0)
+-- TOC entry 5146 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: nhanvien_manhanvien_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1069,25 +1335,25 @@ SELECT pg_catalog.setval('public.nhanvien_manhanvien_seq', 5, true);
 
 
 --
--- TOC entry 5115 (class 0 OID 0)
+-- TOC entry 5147 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: phong_maphong_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.phong_maphong_seq', 5, true);
+SELECT pg_catalog.setval('public.phong_maphong_seq', 7, true);
 
 
 --
--- TOC entry 5116 (class 0 OID 0)
+-- TOC entry 5148 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: sudungdichvu_masddv_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.sudungdichvu_masddv_seq', 5, true);
+SELECT pg_catalog.setval('public.sudungdichvu_masddv_seq', 19, true);
 
 
 --
--- TOC entry 5117 (class 0 OID 0)
+-- TOC entry 5149 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: taikhoan_mataikhoan_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1096,7 +1362,25 @@ SELECT pg_catalog.setval('public.taikhoan_mataikhoan_seq', 5, true);
 
 
 --
--- TOC entry 5118 (class 0 OID 0)
+-- TOC entry 5150 (class 0 OID 0)
+-- Dependencies: 256
+-- Name: taikhoankhachhang_mataikhoan_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.taikhoankhachhang_mataikhoan_seq', 6, true);
+
+
+--
+-- TOC entry 5151 (class 0 OID 0)
+-- Dependencies: 258
+-- Name: taikhoannhanvien_mataikhoan_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.taikhoannhanvien_mataikhoan_seq', 5, true);
+
+
+--
+-- TOC entry 5152 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: thanhtoan_mathanhtoan_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1105,7 +1389,7 @@ SELECT pg_catalog.setval('public.thanhtoan_mathanhtoan_seq', 5, true);
 
 
 --
--- TOC entry 4838 (class 2606 OID 17273)
+-- TOC entry 4848 (class 2606 OID 17273)
 -- Name: auth_group auth_group_name_key; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1114,7 +1398,7 @@ ALTER TABLE ONLY public.auth_group
 
 
 --
--- TOC entry 4843 (class 2606 OID 17204)
+-- TOC entry 4853 (class 2606 OID 17204)
 -- Name: auth_group_permissions auth_group_permissions_group_id_permission_id_0cd325b0_uniq; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1123,7 +1407,7 @@ ALTER TABLE ONLY public.auth_group_permissions
 
 
 --
--- TOC entry 4846 (class 2606 OID 17173)
+-- TOC entry 4856 (class 2606 OID 17173)
 -- Name: auth_group_permissions auth_group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1132,7 +1416,7 @@ ALTER TABLE ONLY public.auth_group_permissions
 
 
 --
--- TOC entry 4840 (class 2606 OID 17165)
+-- TOC entry 4850 (class 2606 OID 17165)
 -- Name: auth_group auth_group_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1141,7 +1425,7 @@ ALTER TABLE ONLY public.auth_group
 
 
 --
--- TOC entry 4833 (class 2606 OID 17195)
+-- TOC entry 4843 (class 2606 OID 17195)
 -- Name: auth_permission auth_permission_content_type_id_codename_01ab375a_uniq; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1150,7 +1434,7 @@ ALTER TABLE ONLY public.auth_permission
 
 
 --
--- TOC entry 4835 (class 2606 OID 17159)
+-- TOC entry 4845 (class 2606 OID 17159)
 -- Name: auth_permission auth_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1159,7 +1443,7 @@ ALTER TABLE ONLY public.auth_permission
 
 
 --
--- TOC entry 4854 (class 2606 OID 17187)
+-- TOC entry 4864 (class 2606 OID 17187)
 -- Name: auth_user_groups auth_user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1168,7 +1452,7 @@ ALTER TABLE ONLY public.auth_user_groups
 
 
 --
--- TOC entry 4857 (class 2606 OID 17219)
+-- TOC entry 4867 (class 2606 OID 17219)
 -- Name: auth_user_groups auth_user_groups_user_id_group_id_94350c0c_uniq; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1177,7 +1461,7 @@ ALTER TABLE ONLY public.auth_user_groups
 
 
 --
--- TOC entry 4848 (class 2606 OID 17179)
+-- TOC entry 4858 (class 2606 OID 17179)
 -- Name: auth_user auth_user_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1186,7 +1470,7 @@ ALTER TABLE ONLY public.auth_user
 
 
 --
--- TOC entry 4860 (class 2606 OID 17193)
+-- TOC entry 4870 (class 2606 OID 17193)
 -- Name: auth_user_user_permissions auth_user_user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1195,7 +1479,7 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 
 --
--- TOC entry 4863 (class 2606 OID 17233)
+-- TOC entry 4873 (class 2606 OID 17233)
 -- Name: auth_user_user_permissions auth_user_user_permissions_user_id_permission_id_14a6b632_uniq; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1204,7 +1488,7 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 
 --
--- TOC entry 4851 (class 2606 OID 17268)
+-- TOC entry 4861 (class 2606 OID 17268)
 -- Name: auth_user auth_user_username_key; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1213,7 +1497,7 @@ ALTER TABLE ONLY public.auth_user
 
 
 --
--- TOC entry 4803 (class 2606 OID 17036)
+-- TOC entry 4813 (class 2606 OID 17036)
 -- Name: datphong datphong_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1222,7 +1506,7 @@ ALTER TABLE ONLY public.datphong
 
 
 --
--- TOC entry 4816 (class 2606 OID 17093)
+-- TOC entry 4826 (class 2606 OID 17093)
 -- Name: dichvu dichvu_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1231,7 +1515,7 @@ ALTER TABLE ONLY public.dichvu
 
 
 --
--- TOC entry 4866 (class 2606 OID 17254)
+-- TOC entry 4876 (class 2606 OID 17254)
 -- Name: django_admin_log django_admin_log_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1240,7 +1524,7 @@ ALTER TABLE ONLY public.django_admin_log
 
 
 --
--- TOC entry 4828 (class 2606 OID 17153)
+-- TOC entry 4838 (class 2606 OID 17153)
 -- Name: django_content_type django_content_type_app_label_model_76bd3d3b_uniq; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1249,7 +1533,7 @@ ALTER TABLE ONLY public.django_content_type
 
 
 --
--- TOC entry 4830 (class 2606 OID 17151)
+-- TOC entry 4840 (class 2606 OID 17151)
 -- Name: django_content_type django_content_type_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1258,7 +1542,7 @@ ALTER TABLE ONLY public.django_content_type
 
 
 --
--- TOC entry 4826 (class 2606 OID 17145)
+-- TOC entry 4836 (class 2606 OID 17145)
 -- Name: django_migrations django_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1267,7 +1551,7 @@ ALTER TABLE ONLY public.django_migrations
 
 
 --
--- TOC entry 4870 (class 2606 OID 17281)
+-- TOC entry 4880 (class 2606 OID 17281)
 -- Name: django_session django_session_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1276,7 +1560,7 @@ ALTER TABLE ONLY public.django_session
 
 
 --
--- TOC entry 4808 (class 2606 OID 17057)
+-- TOC entry 4818 (class 2606 OID 17057)
 -- Name: hoadon hoadon_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1285,7 +1569,7 @@ ALTER TABLE ONLY public.hoadon
 
 
 --
--- TOC entry 4794 (class 2606 OID 17005)
+-- TOC entry 4804 (class 2606 OID 17005)
 -- Name: khachhang khachhang_cccd_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1294,7 +1578,7 @@ ALTER TABLE ONLY public.khachhang
 
 
 --
--- TOC entry 4796 (class 2606 OID 17003)
+-- TOC entry 4806 (class 2606 OID 17003)
 -- Name: khachhang khachhang_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1303,7 +1587,7 @@ ALTER TABLE ONLY public.khachhang
 
 
 --
--- TOC entry 4798 (class 2606 OID 17013)
+-- TOC entry 4808 (class 2606 OID 17013)
 -- Name: loaiphong loaiphong_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1312,7 +1596,7 @@ ALTER TABLE ONLY public.loaiphong
 
 
 --
--- TOC entry 4814 (class 2606 OID 17085)
+-- TOC entry 4824 (class 2606 OID 17085)
 -- Name: nhanvien nhanvien_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1321,7 +1605,7 @@ ALTER TABLE ONLY public.nhanvien
 
 
 --
--- TOC entry 4801 (class 2606 OID 17021)
+-- TOC entry 4811 (class 2606 OID 17021)
 -- Name: phong phong_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1330,7 +1614,7 @@ ALTER TABLE ONLY public.phong
 
 
 --
--- TOC entry 4820 (class 2606 OID 17099)
+-- TOC entry 4830 (class 2606 OID 17099)
 -- Name: sudungdichvu sudungdichvu_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1339,7 +1623,7 @@ ALTER TABLE ONLY public.sudungdichvu
 
 
 --
--- TOC entry 4824 (class 2606 OID 17119)
+-- TOC entry 4834 (class 2606 OID 17119)
 -- Name: taikhoan taikhoan_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1348,7 +1632,25 @@ ALTER TABLE ONLY public.taikhoan
 
 
 --
--- TOC entry 4812 (class 2606 OID 17071)
+-- TOC entry 4883 (class 2606 OID 17490)
+-- Name: taikhoankhachhang taikhoankhachhang_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.taikhoankhachhang
+    ADD CONSTRAINT taikhoankhachhang_pkey PRIMARY KEY (mataikhoan);
+
+
+--
+-- TOC entry 4889 (class 2606 OID 17507)
+-- Name: taikhoannhanvien taikhoannhanvien_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.taikhoannhanvien
+    ADD CONSTRAINT taikhoannhanvien_pkey PRIMARY KEY (mataikhoan);
+
+
+--
+-- TOC entry 4822 (class 2606 OID 17071)
 -- Name: thanhtoan thanhtoan_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1357,7 +1659,43 @@ ALTER TABLE ONLY public.thanhtoan
 
 
 --
--- TOC entry 4836 (class 1259 OID 17274)
+-- TOC entry 4885 (class 2606 OID 17494)
+-- Name: taikhoankhachhang uq_tkkh_email; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.taikhoankhachhang
+    ADD CONSTRAINT uq_tkkh_email UNIQUE (email);
+
+
+--
+-- TOC entry 4887 (class 2606 OID 17492)
+-- Name: taikhoankhachhang uq_tkkh_tentk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.taikhoankhachhang
+    ADD CONSTRAINT uq_tkkh_tentk UNIQUE (tentaikhoan);
+
+
+--
+-- TOC entry 4891 (class 2606 OID 17511)
+-- Name: taikhoannhanvien uq_tknv_email; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.taikhoannhanvien
+    ADD CONSTRAINT uq_tknv_email UNIQUE (email);
+
+
+--
+-- TOC entry 4893 (class 2606 OID 17509)
+-- Name: taikhoannhanvien uq_tknv_tentk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.taikhoannhanvien
+    ADD CONSTRAINT uq_tknv_tentk UNIQUE (tentaikhoan);
+
+
+--
+-- TOC entry 4846 (class 1259 OID 17274)
 -- Name: auth_group_name_a6ea08ec_like; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1365,7 +1703,7 @@ CREATE INDEX auth_group_name_a6ea08ec_like ON public.auth_group USING btree (nam
 
 
 --
--- TOC entry 4841 (class 1259 OID 17215)
+-- TOC entry 4851 (class 1259 OID 17215)
 -- Name: auth_group_permissions_group_id_b120cbf9; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1373,7 +1711,7 @@ CREATE INDEX auth_group_permissions_group_id_b120cbf9 ON public.auth_group_permi
 
 
 --
--- TOC entry 4844 (class 1259 OID 17216)
+-- TOC entry 4854 (class 1259 OID 17216)
 -- Name: auth_group_permissions_permission_id_84c5c92e; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1381,7 +1719,7 @@ CREATE INDEX auth_group_permissions_permission_id_84c5c92e ON public.auth_group_
 
 
 --
--- TOC entry 4831 (class 1259 OID 17201)
+-- TOC entry 4841 (class 1259 OID 17201)
 -- Name: auth_permission_content_type_id_2f476e4b; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1389,7 +1727,7 @@ CREATE INDEX auth_permission_content_type_id_2f476e4b ON public.auth_permission 
 
 
 --
--- TOC entry 4852 (class 1259 OID 17231)
+-- TOC entry 4862 (class 1259 OID 17231)
 -- Name: auth_user_groups_group_id_97559544; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1397,7 +1735,7 @@ CREATE INDEX auth_user_groups_group_id_97559544 ON public.auth_user_groups USING
 
 
 --
--- TOC entry 4855 (class 1259 OID 17230)
+-- TOC entry 4865 (class 1259 OID 17230)
 -- Name: auth_user_groups_user_id_6a12ed8b; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1405,7 +1743,7 @@ CREATE INDEX auth_user_groups_user_id_6a12ed8b ON public.auth_user_groups USING 
 
 
 --
--- TOC entry 4858 (class 1259 OID 17245)
+-- TOC entry 4868 (class 1259 OID 17245)
 -- Name: auth_user_user_permissions_permission_id_1fbb5f2c; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1413,7 +1751,7 @@ CREATE INDEX auth_user_user_permissions_permission_id_1fbb5f2c ON public.auth_us
 
 
 --
--- TOC entry 4861 (class 1259 OID 17244)
+-- TOC entry 4871 (class 1259 OID 17244)
 -- Name: auth_user_user_permissions_user_id_a95ead1b; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1421,7 +1759,7 @@ CREATE INDEX auth_user_user_permissions_user_id_a95ead1b ON public.auth_user_use
 
 
 --
--- TOC entry 4849 (class 1259 OID 17269)
+-- TOC entry 4859 (class 1259 OID 17269)
 -- Name: auth_user_username_6821ab7c_like; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1429,7 +1767,7 @@ CREATE INDEX auth_user_username_6821ab7c_like ON public.auth_user USING btree (u
 
 
 --
--- TOC entry 4864 (class 1259 OID 17265)
+-- TOC entry 4874 (class 1259 OID 17265)
 -- Name: django_admin_log_content_type_id_c4bce8eb; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1437,7 +1775,7 @@ CREATE INDEX django_admin_log_content_type_id_c4bce8eb ON public.django_admin_lo
 
 
 --
--- TOC entry 4867 (class 1259 OID 17266)
+-- TOC entry 4877 (class 1259 OID 17266)
 -- Name: django_admin_log_user_id_c564eba6; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1445,7 +1783,7 @@ CREATE INDEX django_admin_log_user_id_c564eba6 ON public.django_admin_log USING 
 
 
 --
--- TOC entry 4868 (class 1259 OID 17283)
+-- TOC entry 4878 (class 1259 OID 17283)
 -- Name: django_session_expire_date_a5c62663; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1453,7 +1791,7 @@ CREATE INDEX django_session_expire_date_a5c62663 ON public.django_session USING 
 
 
 --
--- TOC entry 4871 (class 1259 OID 17282)
+-- TOC entry 4881 (class 1259 OID 17282)
 -- Name: django_session_session_key_c0390e0f_like; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -1461,7 +1799,7 @@ CREATE INDEX django_session_session_key_c0390e0f_like ON public.django_session U
 
 
 --
--- TOC entry 4804 (class 1259 OID 17049)
+-- TOC entry 4814 (class 1259 OID 17049)
 -- Name: ix_datphong_dates; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1469,7 +1807,7 @@ CREATE INDEX ix_datphong_dates ON public.datphong USING btree (ngaynhan, ngaytra
 
 
 --
--- TOC entry 4805 (class 1259 OID 17047)
+-- TOC entry 4815 (class 1259 OID 17047)
 -- Name: ix_datphong_makhachhang; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1477,7 +1815,7 @@ CREATE INDEX ix_datphong_makhachhang ON public.datphong USING btree (makhachhang
 
 
 --
--- TOC entry 4806 (class 1259 OID 17048)
+-- TOC entry 4816 (class 1259 OID 17048)
 -- Name: ix_datphong_maphong; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1485,7 +1823,7 @@ CREATE INDEX ix_datphong_maphong ON public.datphong USING btree (maphong);
 
 
 --
--- TOC entry 4809 (class 1259 OID 17063)
+-- TOC entry 4819 (class 1259 OID 17063)
 -- Name: ix_hoadon_madatphong; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1493,7 +1831,7 @@ CREATE INDEX ix_hoadon_madatphong ON public.hoadon USING btree (madatphong);
 
 
 --
--- TOC entry 4799 (class 1259 OID 17027)
+-- TOC entry 4809 (class 1259 OID 17027)
 -- Name: ix_phong_maloaiphong; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1501,7 +1839,7 @@ CREATE INDEX ix_phong_maloaiphong ON public.phong USING btree (maloaiphong);
 
 
 --
--- TOC entry 4817 (class 1259 OID 17110)
+-- TOC entry 4827 (class 1259 OID 17110)
 -- Name: ix_sddv_madatphong; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1509,7 +1847,7 @@ CREATE INDEX ix_sddv_madatphong ON public.sudungdichvu USING btree (madatphong);
 
 
 --
--- TOC entry 4818 (class 1259 OID 17111)
+-- TOC entry 4828 (class 1259 OID 17111)
 -- Name: ix_sddv_madichvu; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1517,7 +1855,7 @@ CREATE INDEX ix_sddv_madichvu ON public.sudungdichvu USING btree (madichvu);
 
 
 --
--- TOC entry 4821 (class 1259 OID 17130)
+-- TOC entry 4831 (class 1259 OID 17130)
 -- Name: ix_taikhoan_makhachhang; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1525,7 +1863,7 @@ CREATE INDEX ix_taikhoan_makhachhang ON public.taikhoan USING btree (makhachhang
 
 
 --
--- TOC entry 4822 (class 1259 OID 17131)
+-- TOC entry 4832 (class 1259 OID 17131)
 -- Name: ix_taikhoan_manhanvien; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1533,7 +1871,7 @@ CREATE INDEX ix_taikhoan_manhanvien ON public.taikhoan USING btree (manhanvien);
 
 
 --
--- TOC entry 4810 (class 1259 OID 17077)
+-- TOC entry 4820 (class 1259 OID 17077)
 -- Name: ix_thanhtoan_mahoadon; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1541,7 +1879,7 @@ CREATE INDEX ix_thanhtoan_mahoadon ON public.thanhtoan USING btree (mahoadon);
 
 
 --
--- TOC entry 4882 (class 2606 OID 17210)
+-- TOC entry 4904 (class 2606 OID 17210)
 -- Name: auth_group_permissions auth_group_permissio_permission_id_84c5c92e_fk_auth_perm; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1550,7 +1888,7 @@ ALTER TABLE ONLY public.auth_group_permissions
 
 
 --
--- TOC entry 4883 (class 2606 OID 17205)
+-- TOC entry 4905 (class 2606 OID 17205)
 -- Name: auth_group_permissions auth_group_permissions_group_id_b120cbf9_fk_auth_group_id; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1559,7 +1897,7 @@ ALTER TABLE ONLY public.auth_group_permissions
 
 
 --
--- TOC entry 4881 (class 2606 OID 17196)
+-- TOC entry 4903 (class 2606 OID 17196)
 -- Name: auth_permission auth_permission_content_type_id_2f476e4b_fk_django_co; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1568,7 +1906,7 @@ ALTER TABLE ONLY public.auth_permission
 
 
 --
--- TOC entry 4884 (class 2606 OID 17225)
+-- TOC entry 4906 (class 2606 OID 17225)
 -- Name: auth_user_groups auth_user_groups_group_id_97559544_fk_auth_group_id; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1577,7 +1915,7 @@ ALTER TABLE ONLY public.auth_user_groups
 
 
 --
--- TOC entry 4885 (class 2606 OID 17220)
+-- TOC entry 4907 (class 2606 OID 17220)
 -- Name: auth_user_groups auth_user_groups_user_id_6a12ed8b_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1586,7 +1924,7 @@ ALTER TABLE ONLY public.auth_user_groups
 
 
 --
--- TOC entry 4886 (class 2606 OID 17239)
+-- TOC entry 4908 (class 2606 OID 17239)
 -- Name: auth_user_user_permissions auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1595,7 +1933,7 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 
 --
--- TOC entry 4887 (class 2606 OID 17234)
+-- TOC entry 4909 (class 2606 OID 17234)
 -- Name: auth_user_user_permissions auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1604,7 +1942,7 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 
 --
--- TOC entry 4873 (class 2606 OID 17037)
+-- TOC entry 4895 (class 2606 OID 17037)
 -- Name: datphong datphong_makhachhang_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1613,7 +1951,7 @@ ALTER TABLE ONLY public.datphong
 
 
 --
--- TOC entry 4874 (class 2606 OID 17042)
+-- TOC entry 4896 (class 2606 OID 17042)
 -- Name: datphong datphong_maphong_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1622,7 +1960,7 @@ ALTER TABLE ONLY public.datphong
 
 
 --
--- TOC entry 4888 (class 2606 OID 17255)
+-- TOC entry 4910 (class 2606 OID 17255)
 -- Name: django_admin_log django_admin_log_content_type_id_c4bce8eb_fk_django_co; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1631,7 +1969,7 @@ ALTER TABLE ONLY public.django_admin_log
 
 
 --
--- TOC entry 4889 (class 2606 OID 17260)
+-- TOC entry 4911 (class 2606 OID 17260)
 -- Name: django_admin_log django_admin_log_user_id_c564eba6_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -1640,7 +1978,7 @@ ALTER TABLE ONLY public.django_admin_log
 
 
 --
--- TOC entry 4875 (class 2606 OID 17058)
+-- TOC entry 4897 (class 2606 OID 17058)
 -- Name: hoadon hoadon_madatphong_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1649,7 +1987,7 @@ ALTER TABLE ONLY public.hoadon
 
 
 --
--- TOC entry 4872 (class 2606 OID 17022)
+-- TOC entry 4894 (class 2606 OID 17022)
 -- Name: phong phong_maloaiphong_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1658,7 +1996,7 @@ ALTER TABLE ONLY public.phong
 
 
 --
--- TOC entry 4877 (class 2606 OID 17100)
+-- TOC entry 4899 (class 2606 OID 17100)
 -- Name: sudungdichvu sudungdichvu_madatphong_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1667,7 +2005,7 @@ ALTER TABLE ONLY public.sudungdichvu
 
 
 --
--- TOC entry 4878 (class 2606 OID 17105)
+-- TOC entry 4900 (class 2606 OID 17105)
 -- Name: sudungdichvu sudungdichvu_madichvu_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1676,7 +2014,7 @@ ALTER TABLE ONLY public.sudungdichvu
 
 
 --
--- TOC entry 4879 (class 2606 OID 17120)
+-- TOC entry 4901 (class 2606 OID 17120)
 -- Name: taikhoan taikhoan_makhachhang_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1685,7 +2023,7 @@ ALTER TABLE ONLY public.taikhoan
 
 
 --
--- TOC entry 4880 (class 2606 OID 17125)
+-- TOC entry 4902 (class 2606 OID 17125)
 -- Name: taikhoan taikhoan_manhanvien_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1694,7 +2032,25 @@ ALTER TABLE ONLY public.taikhoan
 
 
 --
--- TOC entry 4876 (class 2606 OID 17072)
+-- TOC entry 4912 (class 2606 OID 17495)
+-- Name: taikhoankhachhang taikhoankhachhang_makhachhang_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.taikhoankhachhang
+    ADD CONSTRAINT taikhoankhachhang_makhachhang_fkey FOREIGN KEY (makhachhang) REFERENCES public.khachhang(makhachhang) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4913 (class 2606 OID 17512)
+-- Name: taikhoannhanvien taikhoannhanvien_manhanvien_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.taikhoannhanvien
+    ADD CONSTRAINT taikhoannhanvien_manhanvien_fkey FOREIGN KEY (manhanvien) REFERENCES public.nhanvien(manhanvien) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4898 (class 2606 OID 17072)
 -- Name: thanhtoan thanhtoan_mahoadon_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1703,7 +2059,7 @@ ALTER TABLE ONLY public.thanhtoan
 
 
 --
--- TOC entry 5079 (class 0 OID 0)
+-- TOC entry 5107 (class 0 OID 0)
 -- Dependencies: 5
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: pg_database_owner
 --
@@ -1712,7 +2068,7 @@ GRANT ALL ON SCHEMA public TO app_user;
 
 
 --
--- TOC entry 5080 (class 0 OID 0)
+-- TOC entry 5108 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: TABLE datphong; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1721,7 +2077,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.datphong TO app_user;
 
 
 --
--- TOC entry 5081 (class 0 OID 0)
+-- TOC entry 5109 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: SEQUENCE datphong_madatphong_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1730,7 +2086,7 @@ GRANT ALL ON SEQUENCE public.datphong_madatphong_seq TO app_user;
 
 
 --
--- TOC entry 5082 (class 0 OID 0)
+-- TOC entry 5110 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: TABLE dichvu; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1739,7 +2095,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.dichvu TO app_user;
 
 
 --
--- TOC entry 5083 (class 0 OID 0)
+-- TOC entry 5111 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: SEQUENCE dichvu_madichvu_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1748,7 +2104,7 @@ GRANT ALL ON SEQUENCE public.dichvu_madichvu_seq TO app_user;
 
 
 --
--- TOC entry 5084 (class 0 OID 0)
+-- TOC entry 5112 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: TABLE hoadon; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1757,7 +2113,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.hoadon TO app_user;
 
 
 --
--- TOC entry 5085 (class 0 OID 0)
+-- TOC entry 5113 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: SEQUENCE hoadon_mahoadon_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1766,7 +2122,7 @@ GRANT ALL ON SEQUENCE public.hoadon_mahoadon_seq TO app_user;
 
 
 --
--- TOC entry 5086 (class 0 OID 0)
+-- TOC entry 5114 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: TABLE khachhang; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1775,7 +2131,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.khachhang TO app_user;
 
 
 --
--- TOC entry 5087 (class 0 OID 0)
+-- TOC entry 5115 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: SEQUENCE khachhang_makhachhang_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1784,7 +2140,7 @@ GRANT ALL ON SEQUENCE public.khachhang_makhachhang_seq TO app_user;
 
 
 --
--- TOC entry 5088 (class 0 OID 0)
+-- TOC entry 5116 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: TABLE loaiphong; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1793,7 +2149,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.loaiphong TO app_user;
 
 
 --
--- TOC entry 5089 (class 0 OID 0)
+-- TOC entry 5117 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: SEQUENCE loaiphong_maloaiphong_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1802,7 +2158,7 @@ GRANT ALL ON SEQUENCE public.loaiphong_maloaiphong_seq TO app_user;
 
 
 --
--- TOC entry 5090 (class 0 OID 0)
+-- TOC entry 5118 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: TABLE nhanvien; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1811,7 +2167,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.nhanvien TO app_user;
 
 
 --
--- TOC entry 5091 (class 0 OID 0)
+-- TOC entry 5119 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: SEQUENCE nhanvien_manhanvien_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1820,7 +2176,7 @@ GRANT ALL ON SEQUENCE public.nhanvien_manhanvien_seq TO app_user;
 
 
 --
--- TOC entry 5092 (class 0 OID 0)
+-- TOC entry 5120 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: TABLE phong; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1829,7 +2185,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.phong TO app_user;
 
 
 --
--- TOC entry 5093 (class 0 OID 0)
+-- TOC entry 5121 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: SEQUENCE phong_maphong_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1838,7 +2194,7 @@ GRANT ALL ON SEQUENCE public.phong_maphong_seq TO app_user;
 
 
 --
--- TOC entry 5094 (class 0 OID 0)
+-- TOC entry 5122 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: TABLE sudungdichvu; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1847,7 +2203,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.sudungdichvu TO app_user;
 
 
 --
--- TOC entry 5095 (class 0 OID 0)
+-- TOC entry 5123 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: SEQUENCE sudungdichvu_masddv_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1856,7 +2212,7 @@ GRANT ALL ON SEQUENCE public.sudungdichvu_masddv_seq TO app_user;
 
 
 --
--- TOC entry 5096 (class 0 OID 0)
+-- TOC entry 5124 (class 0 OID 0)
 -- Dependencies: 236
 -- Name: TABLE taikhoan; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1865,7 +2221,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.taikhoan TO app_user;
 
 
 --
--- TOC entry 5097 (class 0 OID 0)
+-- TOC entry 5125 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: SEQUENCE taikhoan_mataikhoan_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1874,7 +2230,43 @@ GRANT ALL ON SEQUENCE public.taikhoan_mataikhoan_seq TO app_user;
 
 
 --
--- TOC entry 5098 (class 0 OID 0)
+-- TOC entry 5126 (class 0 OID 0)
+-- Dependencies: 257
+-- Name: TABLE taikhoankhachhang; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.taikhoankhachhang TO app_user;
+
+
+--
+-- TOC entry 5127 (class 0 OID 0)
+-- Dependencies: 256
+-- Name: SEQUENCE taikhoankhachhang_mataikhoan_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.taikhoankhachhang_mataikhoan_seq TO app_user;
+
+
+--
+-- TOC entry 5128 (class 0 OID 0)
+-- Dependencies: 259
+-- Name: TABLE taikhoannhanvien; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.taikhoannhanvien TO app_user;
+
+
+--
+-- TOC entry 5129 (class 0 OID 0)
+-- Dependencies: 258
+-- Name: SEQUENCE taikhoannhanvien_mataikhoan_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.taikhoannhanvien_mataikhoan_seq TO app_user;
+
+
+--
+-- TOC entry 5130 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: TABLE thanhtoan; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1883,7 +2275,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.thanhtoan TO app_user;
 
 
 --
--- TOC entry 5099 (class 0 OID 0)
+-- TOC entry 5131 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: SEQUENCE thanhtoan_mathanhtoan_seq; Type: ACL; Schema: public; Owner: postgres
 --
@@ -1892,7 +2284,7 @@ GRANT ALL ON SEQUENCE public.thanhtoan_mathanhtoan_seq TO app_user;
 
 
 --
--- TOC entry 2139 (class 826 OID 17286)
+-- TOC entry 2149 (class 826 OID 17286)
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: postgres
 --
 
@@ -1900,14 +2292,14 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT ALL ON SEQUENC
 
 
 --
--- TOC entry 2138 (class 826 OID 17285)
+-- TOC entry 2148 (class 826 OID 17285)
 -- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: postgres
 --
 
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT,INSERT,DELETE,UPDATE ON TABLES TO app_user;
 
 
--- Completed on 2025-10-03 14:21:33
+-- Completed on 2025-11-21 03:28:20
 
 --
 -- PostgreSQL database dump complete

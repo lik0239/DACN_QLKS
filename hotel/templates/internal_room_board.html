@@ -8,13 +8,33 @@
 </head>
 <body class="p-3">
 <div class="container-fluid">
+
+  {# Header: Tabs + Logout #}
   <div class="d-flex align-items-center justify-content-between mb-3">
-    <h3 class="mb-0">Bảng điều khiển phòng (dành cho nhân viên)</h3>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'internal_room_board' %}">Phòng</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'internal_booking_board' %}">Đơn đặt phòng</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'internal_cancel_requests' %}">Yêu cầu hủy phòng</a>
+      </li>
+      {% if is_manager %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'internal_dashboard' %}">Dashboard doanh thu</a>
+        </li>
+      {% endif %}
+    </ul>
+
     <form action="{% url 'logout' %}" method="post" class="m-0">
       {% csrf_token %}
       <button class="btn btn-outline-danger btn-sm">Đăng xuất</button>
     </form>
   </div>
+
+  <h3 class="mb-3">Bảng điều khiển phòng (dành cho nhân viên)</h3>
 
   <!-- Thống kê nhanh -->
   <div class="row g-3 mb-3">
@@ -81,75 +101,37 @@
             <td>{{ r.trangthai }}</td>
             <td>
               {% if r.next_booking_date %}
-                {{ r.next_booking_date }}
+                {{ r.next_booking_date|date:"d/m/Y" }}
               {% else %}
                 <span class="text-muted">—</span>
               {% endif %}
             </td>
             <td>
-                <div class="btn-group btn-group-sm">
-                    <a class="btn btn-outline-secondary" href="{% url 'room_set_status' r.maphong 'Trống' %}">Trống</a>
-                    <a class="btn btn-outline-secondary" href="{% url 'room_set_status' r.maphong 'Đang dọn' %}">Đang dọn</a>
-                    <a class="btn btn-outline-secondary" href="{% url 'room_set_status' r.maphong 'Bảo trì' %}">Bảo trì</a>
+              <div class="btn-group btn-group-sm">
+                <a class="btn btn-outline-secondary" href="{% url 'room_set_status' r.maphong 'Trống' %}">Trống</a>
+                <a class="btn btn-outline-secondary" href="{% url 'room_set_status' r.maphong 'Đang dọn' %}">Đang dọn</a>
+                <a class="btn btn-outline-secondary" href="{% url 'room_set_status' r.maphong 'Bảo trì' %}">Bảo trì</a>
+              </div>
+
+              {% if r.trangthai == 'Đã đặt' %}
+                <div class="btn-group btn-group-sm mt-1">
+                  <a class="btn btn-success" href="{% url 'room_booking_info' r.maphong %}">Nhận phòng</a>
+                  <a class="btn btn-outline-primary" href="{% url 'room_booking_info' r.maphong %}">Xem khách đặt</a>
                 </div>
-                {% if r.trangthai == 'Đã đặt' %}
-                  <div class="btn-group btn-group-sm mt-1">
-                    {# Vào trang xem đơn gắn phòng -> có nút Check-in chính xác theo đơn #}
-                    <a class="btn btn-success" href="{% url 'room_booking_info' r.maphong %}">Nhận phòng</a>
-                    <a class="btn btn-outline-primary" href="{% url 'room_booking_info' r.maphong %}">Xem khách đặt</a>
-                  </div>
-                    {% elif r.trangthai == 'Đang ở' %}
-                  <div class="btn-group btn-group-sm mt-1">
-                    <a class="btn btn-outline-primary" href="{% url 'room_booking_info' r.maphong %}">Xem khách đang ở</a>
-                  </div>
-                {% endif %}
+              {% elif r.trangthai == 'Đang ở' %}
+                <div class="btn-group btn-group-sm mt-1">
+                  <a class="btn btn-outline-primary" href="{% url 'room_booking_info' r.maphong %}">Xem khách đang ở</a>
+                </div>
+              {% endif %}
             </td>
           </tr>
         {% empty %}
-          <tr><td colspan="5" class="text-muted">Không có phòng.</td></tr>
+          <tr><td colspan="6" class="text-muted">Không có phòng.</td></tr>
         {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
-
-  <!-- Đơn đặt đang chờ -->
-  <div class="card shadow-sm">
-    <div class="card-header fw-semibold">Đơn đặt đang chờ</div>
-    <div class="table-responsive">
-      <table class="table table-sm align-middle mb-0">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Phòng</th>
-            <th>Khách</th>
-            <th>Ngày nhận → trả</th>
-            <th>Trạng thái</th>
-            <th class="text-end">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for d in pending %}
-          <tr>
-            <td>{{ d.madatphong }}</td>
-            <td>{{ d.maphong.sophong }}</td>
-            <td>{{ d.makhachhang.tenkhachhang }}</td>
-            <td>{{ d.ngaynhan }} → {{ d.ngaytra }}</td>
-            <td>{{ d.get_trangthai_display }}</td>
-            <td class="text-end">
-                <a class="btn btn-sm btn-primary" href="{% url 'booking_confirm' d.madatphong %}">Xác nhận</a>
-                <a class="btn btn-sm btn-outline-primary" href="{% url 'booking_detail' d.madatphong %}">Xem khách</a>
-                <a class="btn btn-sm btn-outline-danger" href="{% url 'booking_cancel' d.madatphong %}">Hủy</a>
-            </td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="6" class="text-muted">Không có đơn chờ.</td></tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
 
 </div>
 </body>

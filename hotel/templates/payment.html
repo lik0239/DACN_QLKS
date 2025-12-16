@@ -1,0 +1,323 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Thanh toán đơn #{{ booking.madatphong }}{% endblock %}
+
+{% block content %}
+<div class="pay-container">
+  <h2 class="pay-title">Thanh toán đơn đặt phòng #{{ booking.madatphong }}</h2>
+
+  <form method="post" id="payment-form">
+    {% csrf_token %}
+    <input type="hidden" name="action" id="payment-action" value="pay">
+
+    <div class="pay-grid">
+      <!-- Bên trái: thông tin khách + phòng -->
+      <section class="pay-card">
+        <h3>Thông tin khách hàng</h3>
+        <p><strong>Họ tên:</strong> {{ khach.tenkhachhang }}</p>
+        <p><strong>Email:</strong> {{ khach.email }}</p>
+        <p><strong>SĐT:</strong> {{ khach.sdt }}</p>
+
+        <hr>
+
+        <h3>Thông tin phòng</h3>
+        <p><strong>Phòng:</strong> {{ booking.maphong.sophong }}</p>
+        <p><strong>Hạng phòng:</strong> {{ booking.maphong.maloaiphong.tenloaiphong }}</p>
+        <p><strong>Giá / đêm:</strong> {{ gia_phong_moi_dem|floatformat:0 }} VNĐ</p>
+        <p><strong>Ngày nhận:</strong> {{ booking.ngaynhan|date:"d/m/Y" }}</p>
+        <p><strong>Ngày trả:</strong> {{ booking.ngaytra|date:"d/m/Y" }}</p>
+        <p><strong>Số đêm:</strong> {{ so_dem }}</p>
+      </section>
+
+      <!-- Bên phải: chi tiết tiền + hình thức thanh toán -->
+      <section class="pay-card">
+        <h3>Chi tiết thanh toán</h3>
+
+        <div class="pay-row">
+          <span>Tiền phòng ({{ so_dem }} đêm)</span>
+          <span>{{ tien_phong|floatformat:0 }} VNĐ</span>
+        </div>
+
+        <div class="pay-row">
+          <span>Dịch vụ kèm theo</span>
+          <span>{{ tien_dichvu|floatformat:0 }} VNĐ</span>
+        </div>
+
+        {% if services_used %}
+          <ul class="pay-services">
+            {% for s in services_used %}
+              <li>
+                <span>{{ s.madichvu.tendichvu }} (x{{ s.soluong }})</span>
+                <span>{{ s.tongtien|floatformat:0 }} VNĐ</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <hr>
+
+        <div class="pay-total">
+          <span>Tổng cộng</span>
+          <span>{{ tong_tien|floatformat:0 }} VNĐ</span>
+        </div>
+
+        <h3 style="margin-top:14px;">Chọn hình thức thanh toán</h3>
+        <div class="payment-methods">
+          <label class="pm-option">
+            <input type="radio" name="payment_method" value="later" checked>
+            <span>Thanh toán khi nhận phòng</span>
+          </label>
+          <label class="pm-option">
+            <input type="radio" name="payment_method" value="vietqr">
+            <span>Thanh toán bằng VietQR</span>
+          </label>
+          <label class="pm-option">
+            <input type="radio" name="payment_method" value="card">
+            <span>Thanh toán bằng thẻ (giả lập)</span>
+          </label>
+        </div>
+
+        <!-- Khối VietQR -->
+        <div id="block-vietqr" class="pm-block" style="display:none;">
+          <h4>Quét mã VietQR</h4>
+          <p>Vui lòng quét mã để thanh toán đúng số tiền:</p>
+          <img
+            src="https://img.vietqr.io/image/970403-050004032004-compact2.jpg?amount={{ tong_tien|floatformat:0 }}&addInfo=DP{{ booking.madatphong }}&accountName=HAN%20HA"
+            alt="VietQR Sacombank"
+            class="vietqr-img">
+          <p class="pm-note">
+            STK: <strong>050004032004</strong> – Sacombank<br>
+            Chủ tài khoản: <strong>HA CHI HAN</strong><br>
+            Nội dung chuyển khoản: <strong>DP{{ booking.madatphong }}</strong>
+          </p>
+        </div>
+
+        <!-- Khối thẻ fake -->
+        <div id="block-card" class="pm-block" style="display:none;">
+          <h4>Thông tin thẻ (giả lập)</h4>
+          <div class="card-grid">
+            <div class="card-field">
+              <label>Số thẻ</label>
+              <input type="text" placeholder="1234 5678 9012 3456">
+            </div>
+            <div class="card-field">
+              <label>Tên chủ thẻ</label>
+              <input type="text" placeholder="NGUYEN VAN A">
+            </div>
+            <div class="card-field card-field-half">
+              <label>MM/YY</label>
+              <input type="text" placeholder="12/30">
+            </div>
+            <div class="card-field card-field-half">
+              <label>CVV</label>
+              <input type="password" placeholder="***">
+            </div>
+          </div>
+          <p class="pm-note">* Đây chỉ là mô phỏng, hệ thống không lưu thông tin thẻ thật.</p>
+        </div>
+
+        <p class="pay-note">
+          * Khi bạn xác nhận thanh toán / đặt phòng, yêu cầu sẽ được gửi đến nhân viên để kiểm tra và xác nhận.
+        </p>
+
+        <div class="pay-actions">
+          <!-- nút xác nhận thanh toán -->
+          <button type="submit" class="btn-pay" name="action" value="pay">
+            Xác nhận thanh toán / đặt phòng
+          </button>
+
+          <!-- nút chọn phòng khác -->
+          <button type="submit" class="btn-pay-back" name="action" value="change_room">
+            Chọn phòng khác
+          </button>
+        </div>
+      </section>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Toggle block theo phương thức thanh toán
+  (function() {
+    const radios = document.querySelectorAll('input[name="payment_method"]');
+    const blockVietqr = document.getElementById('block-vietqr');
+    const blockCard   = document.getElementById('block-card');
+
+    function updateBlocks() {
+      const method = document.querySelector('input[name="payment_method"]:checked').value;
+      blockVietqr.style.display = (method === 'vietqr') ? 'block' : 'none';
+      blockCard.style.display   = (method === 'card')   ? 'block' : 'none';
+    }
+
+    radios.forEach(r => r.addEventListener('change', updateBlocks));
+    updateBlocks(); // init
+
+    // Nút "Chọn phòng khác" => huỷ đơn
+    const cancelBtn = document.getElementById('btn-cancel-booking');
+    const actionInput = document.getElementById('payment-action');
+    const form = document.getElementById('payment-form');
+
+    cancelBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (confirm("Nếu bạn chọn phòng khác, đơn đặt phòng hiện tại sẽ bị huỷ. Bạn có chắc chắn không?")) {
+        actionInput.value = 'cancel';
+        form.submit();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .pay-container{
+    max-width:900px;
+    margin:24px auto 40px;
+    background:#fff;
+    border-radius:18px;
+    padding:22px 26px 26px;
+    box-shadow:0 8px 28px rgba(0,0,0,.08);
+  }
+  .pay-title{
+    text-align:center;
+    font-size:1.7rem;
+    margin:0 0 18px;
+    color:#111827;
+  }
+  .pay-grid{
+    display:grid;
+    grid-template-columns:1.1fr 1.1fr;
+    gap:18px;
+  }
+  @media (max-width:768px){
+    .pay-grid{grid-template-columns:1fr;}
+  }
+  .pay-card{
+    border-radius:14px;
+    border:1px solid #e5e7eb;
+    padding:14px 16px;
+    background:#f9fafb;
+  }
+  .pay-card h3{
+    margin:0 0 8px;
+    font-size:1.1rem;
+    color:#1f2937;
+  }
+  .pay-card p{
+    margin:2px 0;
+    font-size:.95rem;
+  }
+  .pay-row{
+    display:flex;
+    justify-content:space-between;
+    margin-top:6px;
+    font-size:.95rem;
+  }
+  .pay-services{
+    list-style:none;
+    padding-left:0;
+    margin:6px 0 0;
+    font-size:.9rem;
+  }
+  .pay-services li{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .pay-total{
+    display:flex;
+    justify-content:space-between;
+    margin-top:8px;
+    font-weight:700;
+    font-size:1rem;
+    color:#1d4ed8;
+  }
+  .pay-note{
+    margin-top:8px;
+    font-size:.85rem;
+    color:#6b7280;
+  }
+
+  .payment-methods{
+    margin-top:8px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .pm-option{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:.95rem;
+  }
+  .pm-block{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:10px;
+    background:#eef2ff;
+    border:1px solid #e5e7eb;
+  }
+  .vietqr-img{
+    width:230px;
+    max-width:100%;
+    border-radius:12px;
+    margin:6px 0;
+    background:#fff;
+  }
+  .pm-note{
+    margin-top:4px;
+    font-size:.85rem;
+    color:#4b5563;
+  }
+
+  .card-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px 12px;
+  }
+  .card-field{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .card-field label{
+    font-size:.85rem;
+    color:#374151;
+  }
+  .card-field input{
+    height:34px;
+    border-radius:8px;
+    border:1px solid:#d1d5db;
+    padding:4px 8px;
+    font-size:.9rem;
+  }
+
+  .pay-actions{
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+  }
+  .btn-pay{
+    background:#16a34a;
+    color:#fff;
+    border:none;
+    border-radius:999px;
+    padding:9px 20px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .btn-pay:hover{filter:brightness(.95);}
+  .btn-pay-back{
+    align-self:center;
+    padding:8px 16px;
+    border-radius:999px;
+    border:1px solid #d1d5db;
+    text-decoration:none;
+    color:#374151;
+    font-size:.95rem;
+    background:#fff;
+    cursor:pointer;
+  }
+  .btn-pay-back:hover{background:#f3f4f6;}
+</style>
+{% endblock %}

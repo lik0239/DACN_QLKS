@@ -64,6 +64,10 @@ class DatPhongForm(forms.ModelForm):
             'ngaynhan': forms.DateInput(attrs={'type': 'date'}),
             'ngaytra' : forms.DateInput(attrs={'type': 'date'}),
         }
+        labels = {
+                'ngaynhan': 'Ngày nhận',
+                'ngaytra': 'Ngày trả',
+            }
 
     def clean(self):
         cleaned = super().clean()

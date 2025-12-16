@@ -8,46 +8,168 @@
   <ul>
     <li><a href="{% url 'home' %}">Tổng quan</a></li>
     <li class="active"><a href="#">Danh sách phòng</a></li>
-    <li><a href="#">Dịch vụ</a></li>
+    <li><a href="{% url 'services' %}">Dịch vụ</a></li>
     <li><a href="#">Hỏi đáp</a></li>
     <li><a href="{% url 'policy' %}">Quy định</a></li>
   </ul>
 </nav>
 
-<section class="room-list-section" style="padding: 2rem;">
-  <h2 style="text-align:center;font-size:2rem;color:#2c3e50;margin-bottom:2rem;">
+<section class="room-list-section" style="padding: 2rem 0 3rem;">
+  <h2 style="text-align:center;font-size:2.2rem;color:#2c3e50;margin-bottom:2.5rem;">
     Danh sách các phòng
   </h2>
 
-  <div style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;">
-        {% for phong in phong_list %}
-        <div style="width:320px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:transform .2s ease;">
-            {% if phong.anh %}
-                <img
-                    src="{{ phong.anh.url|default:phong.anh }}"
+  {% for group in room_groups %}
+    <div class="room-type-section" style="margin-bottom: 3rem;">
+
+      <div style="max-width:1128px;margin:0 auto 1rem;">
+        <h3 style="font-size:1.6rem;margin-bottom:0.25rem;color:#2c3e50;">
+          Hạng phòng: {{ group.loai.tenloaiphong }}
+        </h3>
+      </div>
+
+      {# wrapper + nút mũi tên 2 bên #}
+      <div style="max-width:1128px;margin:0 auto;position:relative;">
+
+        {# nút trái #}
+        <button type="button"
+                onclick="scrollSlider('slider-{{ forloop.counter }}', -1)"
+                style="
+                  position:absolute;
+                  top:50%;
+                  left:-24px;
+                  transform:translateY(-50%);
+                  width:52px;
+                  height:52px;
+                  border-radius:50%;
+                  border:none;
+                  background:#f5a623;
+                  color:#fff;
+                  cursor:pointer;
+                  font-size:24px;
+                  box-shadow:0 4px 12px rgba(0,0,0,.25);
+                  display:flex;
+                  align-items:center;
+                  justify-content:center;
+                  z-index:2;
+                ">
+          &#10094;
+        </button>
+
+        {# vùng slider, ẩn bớt để không lộ card thứ 4 #}
+        <div id="slider-{{ forloop.counter }}"
+             style="
+               overflow-x:hidden;
+               scroll-behavior:smooth;
+               padding:0.5rem 0;
+             ">
+
+          <div style="display:flex;gap:1.5rem;">
+            {% for phong in group.rooms %}
+              <div class="room-card"
+                   style="
+                     min-width:360px;
+                     max-width:360px;
+                     background:#fff;
+                     border-radius:16px;
+                     overflow:hidden;
+                     box-shadow:0 8px 20px rgba(0,0,0,.12);
+                     flex-shrink:0;
+                   ">
+                {% if phong.anh %}
+                  <img
+                    src="{{ phong.anh.url }}"
                     alt="Phòng {{ phong.sophong }}"
-                    style="width:100%;height:200px;object-fit:cover;">
-            {% else %}
-                <div style="width: 100%; height: 200px; background: #ccc; display: flex; align-items: center; justify-content: center; color: white;">Không có ảnh</div>
-            {% endif %}
-            <div style="padding:1rem;">
-                <h3 style="font-size:1.3rem;color:#34495e;margin-bottom:.5rem;">
+                    style="width:100%;height:230px;object-fit:cover;">
+                {% else %}
+                  <div style="width:100%;height:230px;background:#ccc;display:flex;align-items:center;justify-content:center;color:#fff;">
+                    Không có ảnh
+                  </div>
+                {% endif %}
+
+                <div style="padding:1.1rem 1.3rem 1rem;">
+                  <h4 style="font-size:1.3rem;color:#34495e;margin-bottom:.35rem;">
                     Phòng {{ phong.sophong }}
-                </h3>
-                <p><strong>Hạng phòng:</strong> {{ phong.maloaiphong.tenloaiphong }}</p>
-                <p><strong>Giá:</strong> {{ phong.maloaiphong.gia|floatformat:0 }} VNĐ</p>
-                <p><strong>Trạng thái:</strong> {{ phong.trangthai }}</p>
-            </div>
-            <a href="{% url 'datphong' phong.maphong %}"
-                style="display:block;margin:0 1rem 1rem 1rem;padding:.75rem 0;text-align:center;background-color:#3498db;color:#fff;font-weight:600;border-radius:8px;text-decoration:none;transition:background-color .3s ease;"
-                onmouseover="this.style.backgroundColor='#2980b9'"
-                onmouseout="this.style.backgroundColor='#3498db'">
-                Đặt phòng
-            </a>
+                  </h4>
+                  <p style="margin:0.15rem 0;">
+                    <strong>Hạng phòng:</strong> {{ phong.maloaiphong.tenloaiphong }}
+                  </p>
+                  <p style="margin:0.15rem 0;">
+                    <strong>Giá:</strong> {{ phong.maloaiphong.gia|floatformat:0 }} VNĐ / đêm
+                  </p>
+                  <p style="margin:0.15rem 0 0.7rem;">
+                    <strong>Trạng thái:</strong> {{ phong.trangthai }}
+                  </p>
+                </div>
+
+                <div style="padding:0 1.3rem 1.2rem;display:flex;justify-content:flex-end;">
+                  <a href="{% url 'datphong' phong.maphong %}"
+                     style="
+                       padding:0.6rem 1.3rem;
+                       background:#003f7d;
+                       color:#fff;
+                       font-weight:600;
+                       border-radius:6px;
+                       text-decoration:none;
+                       font-size:0.95rem;
+                       transition:background .25s ease, transform .1s ease;
+                     "
+                     onmouseover="this.style.backgroundColor='#002c59';this.style.transform='translateY(-1px)';"
+                     onmouseout="this.style.backgroundColor='#003f7d';this.style.transform='translateY(0)';">
+                    Đặt ngay
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
         </div>
-        {% empty %}
-            <p>Chưa có phòng nào.</p>
-        {% endfor %}
-  </div>
+
+        {# nút phải #}
+        <button type="button"
+                onclick="scrollSlider('slider-{{ forloop.counter }}', 1)"
+                style="
+                  position:absolute;
+                  top:50%;
+                  right:-24px;
+                  transform:translateY(-50%);
+                  width:52px;
+                  height:52px;
+                  border-radius:50%;
+                  border:none;
+                  background:#f5a623;
+                  color:#fff;
+                  cursor:pointer;
+                  font-size:24px;
+                  box-shadow:0 4px 12px rgba(0,0,0,.25);
+                  display:flex;
+                  align-items:center;
+                  justify-content:center;
+                  z-index:2;
+                ">
+          &#10095;
+        </button>
+      </div>
+    </div>
+  {% empty %}
+    <p style="text-align:center;">Chưa có phòng nào.</p>
+  {% endfor %}
 </section>
+
+<script>
+function scrollSlider(id, direction) {
+  const container = document.getElementById(id);
+  if (!container) return;
+
+  const card = container.querySelector('.room-card');
+  if (!card) return;
+
+  const gap = 24; // ~1.5rem
+  const scrollAmount = card.offsetWidth + gap; // trượt đúng 1 card
+
+  container.scrollBy({
+    left: direction * scrollAmount,
+    behavior: 'smooth'
+  });
+}
+</script>
 {% endblock %}

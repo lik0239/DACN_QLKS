@@ -1,0 +1,101 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Yêu cầu hủy phòng</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-3">
+<div class="container-fluid">
+
+  {# --- Thanh tab: Phòng / Đơn đặt / Yêu cầu hủy / Dashboard --- #}
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'internal_room_board' %}">Phòng</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'internal_room_board' %}?view=pending">Đơn đặt phòng</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'internal_cancel_requests' %}">Yêu cầu hủy phòng</a>
+      </li>
+      {% if is_manager %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'internal_dashboard' %}">Dashboard doanh thu</a>
+        </li>
+      {% endif %}
+    </ul>
+
+    <form action="{% url 'logout' %}" method="post" class="m-0">
+      {% csrf_token %}
+      <button class="btn btn-outline-danger btn-sm">Đăng xuất</button>
+    </form>
+  </div>
+
+  <h3 class="mb-3">Yêu cầu hủy phòng từ khách hàng</h3>
+
+  <div class="mt-3">
+    {% for m in messages %}
+      <div class="alert alert-{{ m.tags|default:'info' }} mb-2">{{ m }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header fw-semibold">Danh sách yêu cầu hủy</div>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Phòng</th>
+            <th>Khách</th>
+            <th>Nhận → Trả</th>
+            <th>Ngày đặt</th>
+            <th>Lý do hủy</th>
+            <th class="text-end">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for b in requests %}
+          <tr>
+            <td>{{ b.madatphong }}</td>
+            <td>{{ b.maphong.sophong }}</td>
+            <td>{{ b.makhachhang.tenkhachhang }}</td>
+            <td>{{ b.ngaynhan|date:"d/m/Y" }} → {{ b.ngaytra|date:"d/m/Y" }}</td>
+            <td>{{ b.ngaydat|date:"d/m/Y" }}</td>
+            <td style="max-width:260px;white-space:normal;">
+              {% if b.ghichu %}
+                {% with b.ghichu.splitlines as lines %}
+                  {% for line in lines %}
+                    {% if "[YÊU CẦU HỦY" in line %}
+                      {{ line|cut:"[YÊU CẦU HỦY - ĐÃ THANH TOÁN]"|cut:"[YÊU CẦU HỦY - ĐÃ XÁC NHẬN]"|cut:"[YÊU CẦU HỦY]" }}
+                      <br>
+                    {% endif %}
+                  {% endfor %}
+                {% endwith %}
+              {% else %}
+                <span class="text-muted">Không có lý do.</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              {# Dùng lại view booking_cancel để thật sự hủy đơn & trả phòng #}
+              <a class="btn btn-sm btn-danger"
+                 href="{% url 'booking_cancel' b.madatphong %}">
+                Chấp nhận hủy
+              </a>
+              {# Nếu sau này bạn muốn nút "Từ chối", có thể thêm 1 view riêng #}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-muted">Hiện chưa có yêu cầu hủy nào.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

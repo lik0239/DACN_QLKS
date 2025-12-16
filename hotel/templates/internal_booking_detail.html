@@ -16,6 +16,27 @@
       <div><b>CCCD:</b> {{ dp.makhachhang.cccd }} — <b>SĐT:</b> {{ dp.makhachhang.sdt }}</div>
       <div><b>Nhận → Trả:</b> {{ dp.ngaynhan }} → {{ dp.ngaytra }}</div>
       <div><b>Trạng thái:</b> {{ dp.get_trangthai_display }}</div>
+
+      {# --- Hình thức thanh toán khách đã chọn --- #}
+      {% with pm=dp.phuongthucthanhtoan_du_kien %}
+        <div class="mt-1">
+          <b>Thanh toán:</b>
+
+          {% if pm %}
+            {% if pm == 'VietQR' %}
+              Thanh toán bằng VietQR
+            {% elif pm == 'The' %}
+              Thanh toán bằng thẻ (giả lập)
+            {% elif pm == 'KhiNhanPhong' %}
+              Thanh toán khi nhận phòng
+            {% else %}
+              {{ pm }}
+            {% endif %}
+          {% else %}
+            <span class="text-muted">Chưa chọn / chưa xác định</span>
+          {% endif %}
+        </div>
+      {% endwith %}
     </div>
   </div>
 

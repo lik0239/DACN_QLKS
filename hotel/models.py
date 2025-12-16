@@ -1,5 +1,6 @@
 ﻿import uuid, os
 from django.db import models
+from django.utils import timezone
 
 
 class AuthGroup(models.Model):
@@ -70,34 +71,47 @@ class AuthUserUserPermissions(models.Model):
         db_table = 'auth_user_user_permissions'
         unique_together = (('user', 'permission'),)
 
-
 class Datphong(models.Model):
     madatphong  = models.AutoField(primary_key=True)
     makhachhang = models.ForeignKey('Khachhang', models.DO_NOTHING, db_column='makhachhang')
     maphong     = models.ForeignKey('Phong',      models.DO_NOTHING, db_column='maphong')
-    ngaydat     = models.DateField(blank=True, null=True)
+    ngaydat     = models.DateTimeField(db_column='ngaydat', default=timezone.now)
     ngaynhan    = models.DateField(blank=True, null=True)
     ngaytra     = models.DateField(blank=True, null=True)
+    ghichu      = models.TextField(blank=True, null=True, verbose_name="Ghi chú")
 
     TRANGTHAI_CHOICES = [
-        ('dangcho',    'Đang chờ'),
-        ('xacnhan',    'Đã xác nhận'),
-        ('huy',        'Đã hủy'),
-        ('hoanthanh',  'Hoàn thành'),
+        ('dangcho',       'Đang chờ'),         # khách mới đặt
+        ('chuathanhtoan', 'Chưa thanh toán'),  # đã tạo đơn, chưa thanh toán / chưa chọn phương thức
+        ('xacnhan',       'Đã xác nhận'),      # NV xác nhận giữ phòng
+        ('yeucauhuy',     'Yêu cầu hủy'),      # khách gửi yêu cầu hủy
+        ('huy',           'Đã hủy'),
+        ('hoanthanh',     'Hoàn thành'),
     ]
-    trangthai = models.CharField(db_column='trangthai', max_length=20,
-                                 choices=TRANGTHAI_CHOICES, default='dangcho', blank=True, null=True)
+
+    trangthai = models.CharField(
+        db_column='trangthai',
+        max_length=20,
+        choices=TRANGTHAI_CHOICES,
+        default='dangcho',
+        blank=True,
+        null=True,
+    )
+
+    phuongthucthanhtoan_du_kien = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True
+    )
 
     class Meta:
         managed  = False
         db_table = 'datphong'
 
     def __str__(self):
-        # chú ý field chữ thường: tenkhachhang, sophong
         ten = getattr(self.makhachhang, 'tenkhachhang', '')
         so  = getattr(self.maphong, 'sophong', '')
         return f'#{self.madatphong} - {ten} đặt phòng {so}'
-
 
 class Dichvu(models.Model):
     madichvu = models.AutoField(primary_key=True)
@@ -189,6 +203,9 @@ class Loaiphong(models.Model):
     mota = models.TextField(blank=True, null=True)
     gia = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 
+    def __str__(self):
+        return self.tenloaiphong
+    
     class Meta:
         managed = False
         db_table = 'loaiphong'
@@ -225,15 +242,22 @@ class Phong(models.Model):
 
 class Sudungdichvu(models.Model):
     masddv = models.AutoField(primary_key=True)
-    madatphong = models.ForeignKey(Datphong, models.DO_NOTHING, db_column='madatphong')
-    madichvu = models.ForeignKey(Dichvu, models.DO_NOTHING, db_column='madichvu')
-    soluong = models.IntegerField(blank=True, null=True)
-    tongtien = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    madatphong = models.ForeignKey(
+        'Datphong',
+        db_column='madatphong',
+        on_delete=models.CASCADE
+    )
+    madichvu = models.ForeignKey(
+        'Dichvu',
+        db_column='madichvu',
+        on_delete=models.CASCADE
+    )
+    soluong = models.IntegerField()
+    tongtien = models.DecimalField(max_digits=12, decimal_places=2)
 
     class Meta:
         managed = False
         db_table = 'sudungdichvu'
-
 
 class Taikhoan(models.Model):
     mataikhoan = models.AutoField(primary_key=True)
