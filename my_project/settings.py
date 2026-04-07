@@ -84,7 +84,9 @@ LOGOUT_REDIRECT_URL = "login"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
+    "default": dj_database_url.parse(
+        os.getenv("DATABASE_URL", "postgresql://postgres:Chihan0403@127.0.0.1:5432/DACN_QLKS")
+    )
 }
 
 AUTHENTICATION_BACKENDS = [
